@@ -18,6 +18,7 @@
   "homepage": "https://github.com/runksmania/LanguageLearnersUnitedOver9000#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "pg": "^8.3.3"
+    "pg": "^8.3.3",
+    "request-promise": "^4.2.6"
   }
 }
