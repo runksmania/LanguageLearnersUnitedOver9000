@@ -1,0 +1,16 @@
+Download link:
+https://www.postgresql.org/download/
+
+Install with password located in DatabaseHandler class.
+
+find pgAdmin 4.exe and run.  It will be located in the installation folder for postgresql.
+
+Or use commandline.  Search for environment variables, edit the path variable and add a new variable that points to the bin folder of your postgresql installation.
+
+when in commandline run psql -U postgres and enter the password.  createdb and enter the databasename which is LLUO.
+
+then for future connections use psql -U postgres -d LLUO to connect to the database.
+
+Commands to help navigate:
+\i [filename] to run a script file.
+\dt to lists tables

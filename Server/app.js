@@ -58,13 +58,14 @@ app.use(session({
 app.use(flash());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/**
- * 
- * 
- * Begin app.gets
- * 
- * 
- */
+/************************************************************************************
+ ************************************************************************************
+ ************************************************************************************
+ ******************************* BEGIN APP.GETS *************************************
+ ************************************************************************************
+ ************************************************************************************
+ ************************************************************************************
+ ************************************************************************************/
 
 app.get('/', (req, res) => {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -96,12 +97,47 @@ app.get('/login', (req, res) => {
     res.redirect('/');
 });
 
+/************************************************************************************
+ ************************************************************************************
+ ************************************************************************************
+ ******************************* BEGIN APP.POSTS ************************************
+ ************************************************************************************
+ ************************************************************************************
+ ************************************************************************************
+ ************************************************************************************/
+
+app.post('/login', [body('username').trim().escape()], (req, res) => {
+    var user;
+
+    dbhandler.attemptLogin(req.body.username, req.body.password, function (err, result) {
+        if (err) {
+            logger.error('Therer was an error attempting to login:\n' + req.body.username);
+            logger.error(err);
+            var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                + ' should this issue persist.';
+            req.flash('info', 'requestError');
+            req.flash('requestError', flashMessage);
+            res.redirect('/');
+        }
+        else {
+            user = result;
+
+            if (user == null) {
+                res.render('loginFailed');
+            }
+            else {
+                req.session.user = user;
+                user.resetPass == false ? res.redirect('/main') : res.redirect('/resetPassword')
+            }
+        }
+    });
+
+});
 
 app.use((req, res) => {
     res.redirect('/');
 });
 
 app.listen(constants.port, constants.host, () => {
-    logger.info('Connected to database successfully.');
     logger.info('Server is now listening on: ' + constants.host + ':' + constants.port);
 });
