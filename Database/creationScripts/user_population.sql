@@ -3,8 +3,10 @@
    Author: Michael Cottrell & Riley Tucker
 */
 
+\echo 'Deleting users table data...\n'
 DELETE FROM users;
 
+\echo 'Inserting default users...\n'
 INSERT INTO users
 VALUES
 (57, 
@@ -15,7 +17,7 @@ VALUES
 'd4d2212f558c7b95c8078d617f4662f39d9768724463450c1aee103427f54feecc481df0f5536132777f713088c2151bb6784db371e447f41252c0d5f2374485',
 'msc42@humboldt.edu',
 1,
-1,
+NULL,
 Now()-- - INTERVAL '3 month'
 );
 
@@ -29,6 +31,6 @@ VALUES
 'b514edbc0989d97b63f67e55bd10da6b94e28ddd9a076ce7d5cfbb9ff6709daadee7cc997b1cafce65222497015145ed8d5110c59bfe11e26b47065c2c7652b2',
 'ret252@humboldt.edu',
 1,
-1,
+NULL,
 Now()
 );

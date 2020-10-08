@@ -3,8 +3,10 @@
    Author: Michael Cottrell & Riley Tucker
 */
 
+\echo 'Dropping previous user table if exists...\n'
 DROP TABLE IF EXISTS users CASCADE;
 
+\echo 'Creating user table...\n'
 CREATE TABLE users
 (
     user_num      VARCHAR(4)   PRIMARY KEY,
@@ -20,8 +22,10 @@ CREATE TABLE users
     security_code CHAR(4) DEFAULT NULL
 );
 
+\echo 'Dropping previous user_prev_pass table if exists...\n'
 DROP TABLE IF EXISTS user_prev_pass CASCADE;
 
+\echo 'Creating user_prev_pass table...\n'
 CREATE TABLE user_prev_pass
 (
     user_num     VARCHAR(4) REFERENCES users,
