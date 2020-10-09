@@ -7,6 +7,10 @@
 \echo 'Running tables.sql...\n'
 \i tables.sql
 
+--Initialize triggers.
+\echo 'Running triggers.sql...\n'
+\i triggers.sql
+
 --Initialize default user entries.
 \echo 'Running user_population.sql...\n'
 \i user_population.sql

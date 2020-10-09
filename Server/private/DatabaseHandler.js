@@ -15,7 +15,7 @@ module.exports = class DatabaseHandler {
                 host: 'localhost',
                 user: 'postgres',
                 database: 'LLUO',
-                password: 'cjuZmiusNxtdgkt3eJ22',
+                //password: 'cjuZmiusNxtdgkt3eJ22',
                 port: 5432
             });
 
@@ -107,7 +107,7 @@ module.exports = class DatabaseHandler {
 
     //Function to grab salt for resetting password.
     saltQuery(username, done) {
-        this.pool.query('SELECT salt FROM emp WHERE username = $1', [username], function (err, res) {
+        this.pool.query('SELECT salt FROM users WHERE username = $1', [username], function (err, res) {
             return done(err, res.rows);
         });
     }
@@ -122,10 +122,10 @@ module.exports = class DatabaseHandler {
             var hashPass = hash.hashPassword(res[0].salt, pass);
 
             var queryString = 'SELECT prev_pass\n'
-                + 'FROM emp_prev_pass\n'
-                + 'WHERE prev_pass = $1 AND emp_num = (\n'
-                + 'SELECT emp_num\n'
-                + 'FROM emp\n'
+                + 'FROM user_prev_pass\n'
+                + 'WHERE prev_pass = $1 AND user_num = (\n'
+                + 'SELECT user_num\n'
+                + 'FROM users\n'
                 + 'WHERE username = $2\n'
                 + ');';
 
@@ -149,7 +149,7 @@ module.exports = class DatabaseHandler {
             var tempDbhandler = new DatabaseHandler();
             var hashPass = hash.hashPassword(salt, password);
 
-            var queryString = 'UPDATE emp\n'
+            var queryString = 'UPDATE users\n'
                 + 'SET pass = $1,\n'
                 + 'first_login = 1,\n'
                 + 'pass_age = NOW()\n'

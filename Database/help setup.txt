@@ -9,8 +9,21 @@ Or use commandline.  Search for environment variables, edit the path variable an
 
 when in commandline run psql -U postgres and enter the password.  createdb and enter the databasename which is LLUO.
 
-then for future connections use psql -U postgres -d LLUO to connect to the database.
+Create a file called pgpass.conf in your %AppData%\Roaming\postgresql folder.  If the folder doesn't exist create the folder. 
+This file should contain a single line stating the following. localhost:5432:LLUO:postgres:[password].  Enter the password into the [password] spot.
+I will email you the password for security reasons as it should not be in the default code.
 
-Commands to help navigate:
+Then for future connections use psql -U postgres -d LLUO -w to connect to the database.
+
+Commands to help navigate while in psql command prompt:
 \i [filename] to run a script file.
-\dt to lists tables
+\dt to list tables
+
+Commands while trying to get to psql command prompt:
+-h [hostaddress] designate host address
+-U [username] tell psql which user to login as
+-w do not prompt for password
+-W [password] use password if left blank as -W only or prompt for password
+-d [database name] tell psql which database to connect to
+-f [filename] tell psql to take and run input from a file
+

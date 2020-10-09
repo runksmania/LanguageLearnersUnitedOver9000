@@ -97,6 +97,37 @@ app.get('/login', (req, res) => {
     res.redirect('/');
 });
 
+app.get('/resetPassword', (req, res) => {
+    if (req.session && req.session.user) {
+        res.render('resetPassword', { failed: false });
+    }
+    else {
+        res.redirect('/');
+    }
+
+});
+
+app.get('/main', (req, res) => {
+    if (req.session && req.session.user) {
+        let data = { name: req.session.user.name, accessToken: req.session.user.accessToken };
+
+        if (req.session.user.resetPass == true) {
+            res.redirect('/resetPassword');
+        }
+        else {
+            res.render('main', data);
+        }
+    }
+    else {
+        res.redirect('/');
+    }
+});
+
+app.get('*/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
 /************************************************************************************
  ************************************************************************************
  ************************************************************************************
@@ -134,7 +165,55 @@ app.post('/login', [body('username').trim().escape()], (req, res) => {
 
 });
 
+app.post('/resetPassword', (req, res) => {
+    if (req.session && req.session.user) {
+        var user = req.session.user;
+
+        if (user.firstLogin || user.resetPass) {
+            dbhandler.prevPassQuery(user.username, req.body.pass, function (error, result) {
+                if (result.length == 0) {
+
+                    dbhandler.resetPassword(user.username, req.body.pass, function (err, bool) {
+                        if (err) {
+                            logger.error('Therer was an error attempting to reset password:\n' + user.username);
+                            logger.error(err);
+                            var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                                + ' should this issue persist.';
+                            req.flash('info', 'requestError');
+                            req.flash('requestError', flashMessage);
+                            res.redirect('/');
+
+                        }
+                        else {
+                            req.flash('info', 'passwordReset');
+                            req.flash('passwordReset', 'Your password has been reset');
+                            req.session.user.resetPass = false;
+                            res.redirect('/');
+                        }
+                    })
+                }
+                else {
+                    res.render('resetPassword', { failed: true });
+                }
+            });
+        }
+        else {
+            res.redirect('/main');
+        }
+    }
+    else {
+        res.redirect('/');
+    }
+});
+
+//Default page to show if user requests a page that doesn't exist.
+//Add flash message to show 404 error.
 app.use((req, res) => {
+    logger.error('There was an an attempt to reach a page that doesn\'t exist. (404 error) by user (undefined no username):\n' + req.body.username);
+    var flashMessage = 'ERROR 404 PAGE NOT FOUND\nThere was an error processing that request. Please try again or contact an administrator'
+        + ' should this issue persist.';
+    req.flash('info', '404Error');
+    req.flash('404Error', flashMessage);
     res.redirect('/');
 });
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Main Page</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="/css/content.css" />
+    <link rel="shortcut icon" href="../graphics/favicon.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/scripts/main.js"></script>
+</head>
+
+<body>
+
+    <h1>Welcome <%= name%></h1>
+
+    <h2>RHC Expenses Main Page</h2><br />
+
+    <div class="contentWrapper">
+        <div class="content">
+            <div class="panel">
+                <h4>Vendor</h4>
+                <ul>
+                    <li>
+                        <a href="main/vendors">Vendors</a>
+                    </li>
+                    <li>
+                        <a href="main/addNewVendor">Add Vendor</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h4>Users</h4>
+                <ul>
+                    <li>
+                        <a href="main/admin/addNewUser">Create Employee</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h4>Items</h4>
+                <ul>
+                    <li>
+                        <a href="main/items">Item List</a>
+                    </li>
+                    <li>
+                        <a href="main/addItem">Add Item</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h4>Purchase Orders</h4>
+                <ul>
+                    <li>
+                        <a href="/main/createPO">Create PO</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <a href="logout">Logout</a>
+
+</body>
+
+</html>
