@@ -209,7 +209,7 @@ app.post('/resetPassword', (req, res) => {
 //Default page to show if user requests a page that doesn't exist.
 //Add flash message to show 404 error.
 app.use((req, res) => {
-    logger.error('There was an an attempt to reach a page that doesn\'t exist. (404 error) by user (undefined no username):\n' + req.body.username);
+    logger.error('There was an an attempt to reach a page for [' + req.path + '] that doesn\'t exist. (404 error) by user (undefined no username):\n' + req.body.username);
     var flashMessage = 'ERROR 404 PAGE NOT FOUND\nThere was an error processing that request. Please try again or contact an administrator'
         + ' should this issue persist.';
     req.flash('info', '404Error');

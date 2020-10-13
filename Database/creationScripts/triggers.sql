@@ -1,8 +1,9 @@
 /* LLUO Project Database Default Trigger Creation File
-   Last modified: 10/8/2020
+   Last modified: 10/12/2020
    Author: Michael Cottrell & Riley Tucker
 */
 
+\echo "Creating function prev_pass_procedure...\n"
 CREATE OR REPLACE FUNCTION prev_pass_procedure()
     RETURNS TRIGGER AS $prev_pass_procedure$
     BEGIN
@@ -13,8 +14,10 @@ CREATE OR REPLACE FUNCTION prev_pass_procedure()
     END;
 $prev_pass_procedure$ LANGUAGE plpgsql;
 
+\echo "Dropping prev_pass_trigger if exists...\n"
 DROP TRIGGER IF EXISTS prev_pass_trig ON users CASCADE;
 
+\echo "Creating prev_pass_trigger...\n"
 CREATE  TRIGGER prev_pass_trig 
     AFTER UPDATE OR INSERT
     ON users
