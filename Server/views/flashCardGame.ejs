@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/scripts/flashCardGame.js"></script>
+    <script src="/scripts/logout.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/flashCardGame.css" />
+    <link rel="stylesheet" type="text/css" href="/css/content.css" />
+    <% if (words_list){%>
+        <script>var word_list = <%- JSON.stringify(words_list) %></script>
+    <%}%>
+</head>
+
+<body>
+    <div class="contentWrapper">
+        <h4 id="title"><%=language%> Flash Card Game</h4>
+        <div class="content">
+            <p id="word" onselectstart="return false"><p>
+        </div>
+        <input type="button" name="prevWord" value="Previous" id="prev"/>
+        <input type="button" name="nextWord" value="Next" id="next"/>
+    </div>
+    <a href="logout">Logout</a>
+</body>
+
+</html>

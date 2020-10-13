@@ -123,6 +123,16 @@ app.get('/main', (req, res) => {
     }
 });
 
+app.get('/main/flashCardGame', (req, res) => {
+    if (req.session && req.session.user) {
+
+        res.render('flashCardGame', { words_list: ['pineapple', 'orange'], language: 'Russian' });
+    }
+    else {
+        res.redirect('/');
+    }
+});
+
 app.get('*/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
