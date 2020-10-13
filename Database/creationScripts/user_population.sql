@@ -5,6 +5,7 @@
 
 \echo 'Deleting users table data...\n'
 DELETE FROM users;
+\echo
 
 \echo 'Inserting default users...\n'
 INSERT INTO users
@@ -17,9 +18,10 @@ VALUES
 'd4d2212f558c7b95c8078d617f4662f39d9768724463450c1aee103427f54feecc481df0f5536132777f713088c2151bb6784db371e447f41252c0d5f2374485',
 'msc42@humboldt.edu',
 1,
-NULL,
+1,
 Now()-- - INTERVAL '3 month'
 );
+\echo
 
 INSERT INTO users
 VALUES
@@ -34,3 +36,4 @@ VALUES
 NULL,
 Now()
 );
+\echo

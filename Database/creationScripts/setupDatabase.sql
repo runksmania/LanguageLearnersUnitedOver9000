@@ -1,5 +1,5 @@
 /* LLUO Project Database Default Setup Database File
-   Last modified: 10/8/2020
+   Last modified: 10/13/2020
    Author: Michael Cottrell & Riley Tucker
 */
 
@@ -12,5 +12,5 @@
 \i triggers.sql
 
 --Initialize default user entries.
-\echo 'Running user_population.sql...\n'
-\i user_population.sql
+\echo 'Running population.sql...\n'
+\i population.sql

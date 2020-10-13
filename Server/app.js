@@ -1,11 +1,12 @@
 'use strict';
 
 /**
- * Import Classes.
+ * Import Classes and functions.
  */
 const databaseHandler = require('./private/DatabaseHandler');
 const logger = require('./private/logger');
 const Constants = require('./private/Constants');
+const wordsRequest = require('./private/wordsHttpRequest').wordsHttpRequest;
 
 /**
 * Instantiate Classes.
@@ -123,10 +124,50 @@ app.get('/main', (req, res) => {
     }
 });
 
-app.get('/main/flashCardGame', (req, res) => {
+app.get('/main/flashCardGames/?:lang', (req, res) => {
     if (req.session && req.session.user) {
 
         res.render('flashCardGame', { words_list: ['pineapple', 'orange'], language: 'Russian' });
+
+        //After rendering page check language age and update database if its been 3 months.
+        dbhandler.languageAgeQuery(req.params.lang)
+            .then(res => {
+                if (res.rows.length == 1) {
+
+                    if (Math.floor((Date.now() - res.rows[0].last_updated) / (2592000000)) >= 3) {
+                        logger.info('Updating word list for: ' + req.params.lang);
+                        logger.info('Grabbing word list...');
+                        wordsRequest(req.params.lang.toLowerCase())
+                            .then(words => {
+                                logger.info('List grabbed successfully.\n\n');
+                                logger.info('Inserting words into database.\n');
+                                var promises = [];
+                                logger.debug(words[1]);
+
+                                for (var i = 1; i < words.length; i++) {
+                                    promises.push(dbhandler.insertWord(req.params.lang.toLowerCase(), words[i]));
+                                }
+
+                                Promise.all([promises])
+                                    .then(values => {
+                                        logger.info('Words inserted successfully.\n\n');
+                                    })
+                                    .catch(err => {
+                                        logger.error('Problem inserting words into database: \n' + err + '\n');
+                                    });
+                            })
+                            .catch(err => {
+                                logger.error('Problem with grabbing words list: \n' + err + '\n');
+                            });
+                    }
+                }
+                else {
+                    logger.error('No language found for: ' + req.params.lang);
+                }
+            })
+            .catch(err => {
+                logger.error(err);
+            });
     }
     else {
         res.redirect('/');
@@ -219,7 +260,9 @@ app.post('/resetPassword', (req, res) => {
 //Default page to show if user requests a page that doesn't exist.
 //Add flash message to show 404 error.
 app.use((req, res) => {
-    logger.error('There was an an attempt to reach a page for [' + req.path + '] that doesn\'t exist. (404 error) by user (undefined no username):\n' + req.body.username);
+    var user = req.session.user ? req.session.user : { 'username': undefined }
+    logger.error('There was an an attempt to reach a page for [' + req.path + '] that doesn\'t exist. (404 error) by user (undefined no username): '
+        + user.username);
     var flashMessage = 'ERROR 404 PAGE NOT FOUND\nThere was an error processing that request. Please try again or contact an administrator'
         + ' should this issue persist.';
     req.flash('info', '404Error');

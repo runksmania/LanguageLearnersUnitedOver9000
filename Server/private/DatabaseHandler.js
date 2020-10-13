@@ -6,7 +6,9 @@
 const { Pool, Client } = require('pg');
 const logger = require('../private/logger');
 const User = require('../private/User');
-const hash = require('../private/hash.js')
+const hash = require('../private/hash.js');
+const { query } = require('express');
+const util = require('util');
 
 module.exports = class DatabaseHandler {
     constructor() {
@@ -161,227 +163,51 @@ module.exports = class DatabaseHandler {
         });
     }
 
-    //This function inserts a new vendor into the database.
-    addNewVendor(vName, vAddress, vCity, vState, vZip, payTerms, done) {
-        var queryString = 'INSERT INTO vendor\n'
-            + 'VALUES\n'
-            + '('
-            + 'DEFAULT,$1,$2,$3,$4,$5,$6'
-            + ');';
+    //This function queries all languages available.
+    languageQuery(done) {
+        var queryString = 'SELECT lang_name\n'
+            + 'FROM languages;';
 
-        this.pool.query(queryString, [vName, vAddress, vCity, vState, vZip, payTerms], function (err, res) {
-            return done(err, res);
+        this.pool.query(queryString, function (error, result) {
+            return done(error, result.rows)
         });
     }
 
-    //This function inserts a new item into the database.
-    addItem(iName, vId, price, desc, min_quan, max_quan, done) {
-        var queryString = 'INSERT INTO item\n'
-            + 'VALUES\n'
-            + '('
-            + 'DEFAULT,$1,$2,$3,$4,$5,$6'
-            + ');';
+    //This function queries the age of the words of a language.
+    languageAgeQuery(lang_name) {
 
-        this.pool.query(queryString, [iName, vId, price, desc, min_quan, max_quan], function (err, res) {
-            return done(err, res);
-        });
-    }
+        return new Promise(function (resolve, reject) {
+            var queryString = 'SELECT last_updated\n'
+                + 'FROM languages\n'
+                + 'WHERE lang_name = $1;';
 
-    //This functions grabs all vendors if no options. Query will search for partial matches.
-    //Options:
-    //  vId:            Search by vendor Id.
-    //  vName:          Search by vendor name.
-    //  iName:          Search by vendors with item name.
-    //  City:           Search by vendors city.
-    //  Payment Terms:  Search vendors by payment terms.
-    vendorQuery(opts, done) {
-        if (opts['narrow'] != null) {
-            var queryString = ''
+            this.pool.query(queryString, [lang_name], function (err, res) {
 
-            switch (opts['narrow']) {
-                case '':
-                    queryString = 'SELECT DISTINCT v.vendor_id, vendor_name, vendor_address,\n'
-                        + 'vendor_city, vendor_state, vendor_zip, payment_terms\n'
-                        + 'FROM vendor v, item i\n'
-                        + 'WHERE v.vendor_name ILIKE $1\n'
-                        + 'OR i.item_name ILIKE $1\n'
-                        + 'OR v.vendor_city ILIKE $1\n'
-                        + 'OR v.payment_terms ILIKE $1\n'
-                        + 'AND v.vendor_id = i.vendor_id\n';
-                    break;
-
-                case '1':
-                    queryString = 'SELECT v.vendor_id, vendor_name, vendor_address,\n'
-                        + 'vendor_city, vendor_state, vendor_zip, payment_terms\n'
-                        + 'FROM vendor v\n'
-                        + 'WHERE v.vendor_id = $1\n';
-
-                case '2':
-                    queryString = 'SELECT v.vendor_id, vendor_name, vendor_address,\n'
-                        + 'vendor_city, vendor_state, vendor_zip, payment_terms\n'
-                        + 'FROM vendor v\n'
-                        + 'WHERE v.vendor_name ILIKE $1\n';
-                    break;
-
-                case '3':
-                    queryString = 'SELECT DISTINCT v.vendor_id, vendor_name, vendor_address,\n'
-                        + 'vendor_city, vendor_state, vendor_zip, payment_terms\n'
-                        + 'FROM vendor v, item i\n'
-                        + 'WHERE i.item_name ILIKE $1\n'
-                        + 'AND v.vendor_id = i.vendor_id\n';
-                    break;
-
-                case '4':
-                    queryString = 'SELECT v.vendor_id, vendor_name, vendor_address,\n'
-                        + 'vendor_city, vendor_state, vendor_zip, payment_terms\n'
-                        + 'FROM vendor v\n'
-                        + 'WHERE v.vendor_city ILIKE $1\n'
-                    break;
-
-                case '5':
-                    queryString = 'SELECT v.vendor_id, vendor_name, vendor_address,\n'
-                        + 'vendor_city, vendor_state, vendor_zip, payment_terms\n'
-                        + 'FROM vendor v\n'
-                        + 'WHERE v.payment_terms ILIKE $1\n'
-                    break;
-
-                default:
-                    return done(new Error('No determinable search parameters found.'), null);
-
-            }
-
-            queryString += 'ORDER BY vendor_name;'
-
-            this.pool.query(queryString, ['%' + opts['search'] + '%'], function (err, res) {
-                return done(err, res);
-            });
-        }
-        else {
-            this.pool.query('SELECT * FROM vendor order by vendor_name;', function (err, res) {
-                return done(err, res);
-            });
-        }
-    }
-
-    //This functions grabs all items from vendor specified if no options. Query will search for partial matches.
-    //Options:
-    //  itemId: Search by item id.
-    //  iName:  Search by item name.
-    //  Price:  Search by item price.
-    specificVendorItemQuery(opts, vId, done) {
-        if (opts['narrow'] != null) {
-            var queryString = ''
-
-            switch (opts['narrow']) {
-                case '':
-
-                    //Due to switch and callbacks need to provide a second argument for
-                    //  this query to work properly.
-                    queryString = 'SELECT item_num, item_name, item_desc, item_price,\n'
-                        + 'min_quan, max_quan\n'
-                        + 'FROM item\n'
-                        + 'WHERE vendor_id = $1 AND item_name ILIKE $2;';
-                    Object.assign(opts, { 'search': '' });
-                    break;
-
-                case '1':
-                    queryString = 'SELECT item_num, item_name, item_desc, item_price,\n'
-                        + 'min_quan, max_quan\n'
-                        + 'FROM item\n'
-                        + 'WHERE vendor_id = $1 AND item_num = $2;';
-                    break;
-
-                case '2':
-                    queryString = 'SELECT item_num, item_name, item_desc, item_price,\n'
-                        + 'min_quan, max_quan\n'
-                        + 'FROM item\n'
-                        + 'WHERE vendor_id = $1 AND item_name ILIKE $2;';
-                    break;
-
-                case '3':
-                    var nums = opts['search'].split(' ');
-
-                    //Change max value by 1 to allow for integer change to be accounted for
-                    //  in precise lookup.
-                    if (nums[0] === nums[1]) {
-                        nums[1] = Math.floor(parseInt(nums[1])) + 1;
-                    }
-
-                    queryString = 'SELECT item_num, item_name, item_desc, item_price,\n'
-                        + 'min_quan, max_quan\n'
-                        + 'FROM item\n'
-                        + 'WHERE vendor_id = $1 AND\n'
-                        + 'item_price BETWEEN ' + nums[0] + ' AND ' + nums[1] + ';';
-
-                    logger.debug(queryString);
-                    break;
-
-                default:
-                    return done(new Error('No determinable search parameters found.'), null);
-
-            }
-
-            if (opts['narrow'] == '3') {
-                //Price searching needs its own special query.
-                this.pool.query(queryString, [vId], function (err, res) {
-                    return done(err, res);
-                });
-            }
-            else {
-                this.pool.query(queryString, [vId, '%' + opts['search'] + '%'], function (err, res) {
-                    return done(err, res);
-                });
-            }
-        }
-        else {
-            this.pool.query('SELECT v.vendor_id, v.vendor_name, item_num, item_name, item_desc, item_price,\n'
-                + 'min_quan, max_quan\n'
-                + 'FROM item i, vendor v\n'
-                + 'WHERE i.vendor_id = v.vendor_id;',
-                function (err, res) {
-                    return done(err, res);
-                });
-        }
-    }
-
-    //This functions updates all items from the give array.
-    updateItems(itemsData, done) {
-        var promises = itemsData.map(function (row) {
-            var tempDbhandler = new DatabaseHandler()
-            var queryString = 'UPDATE item\n'
-                + 'SET item_name = $2, item_desc = $3, item_price = $4, min_quan = $5, max_quan = $6\n'
-                + 'WHERE item_num = $1;'
-
-            row[0] = parseInt(row[0])
-            row[3] = parseFloat(row[3])
-            row[4] = parseInt(row[4])
-            row[5] = parseInt(row[5])
-
-            tempDbhandler.pool.query(queryString, row, function (err, res) {
                 if (err) {
-                    return done(err, res)
+                    reject(err);
                 }
                 else {
-                    logger.info('Updated items table: ');
-                    logger.info(queryString);
-                    logger.info(row);
-                    return done(err, res);
+                    resolve(res);
                 }
             });
-        });
+        }.bind(this))
+    }
 
-        Promise.all(promises).then(function () {
-            var tempDbhandler = new DatabaseHandler();
-            tempDbhandler.pool.query('SELECT v.vendor_id, v.vendor_name, item_num, item_name, item_desc, item_price,\n'
-                + 'min_quan, max_quan\n'
-                + 'FROM item i, vendor v\n'
-                + 'WHERE i.vendor_id = v.vendor_id;',
-                function (err, res) {
-                    logger.info('Grabbed data from table:')
-                    logger.info(res.rows);
-                    return done(err, res);
-                });
-        }
-        );
+    insertWord(lang_name, data) {
+
+        return new Promise(function (resolve, reject) {
+            var queryString = 'INSERT INTO words_' + lang_name + '\n'
+                + 'VALUES'
+                + '($1,$2,$3);';
+
+            this.pool.query(queryString, data, function (err, res) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(res);
+                }
+            });
+        }.bind(this))
     }
 }
