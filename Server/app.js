@@ -25,6 +25,7 @@ const session = require('express-session');
 const { body } = require('express-validator');
 const { sanitizeBody } = require('express-validator');
 var flash = require('connect-flash');
+const { type } = require('os');
 
 /**
  *
@@ -133,27 +134,45 @@ app.get('/main/flashCardGames/?:lang', (req, res) => {
         dbhandler.languageAgeQuery(req.params.lang)
             .then(res => {
                 if (res.rows.length == 1) {
+                    var needs_updated = res.rows[0].last_updated == null || Math.floor((Date.now() - res.rows[0].last_updated) / (2592000000)) >= 3 ? true : false;
 
-                    if (Math.floor((Date.now() - res.rows[0].last_updated) / (2592000000)) >= 3) {
-                        logger.info('Updating word list for: ' + req.params.lang);
+                    if (needs_updated) {
+                        logger.info('Updating or inserting word list for: ' + req.params.lang);
                         logger.info('Grabbing word list...');
                         wordsRequest(req.params.lang.toLowerCase())
                             .then(words => {
                                 logger.info('List grabbed successfully.\n\n');
-                                logger.info('Inserting words into database.\n');
                                 var promises = [];
-                                logger.debug(words[1]);
 
-                                for (var i = 1; i < words.length; i++) {
-                                    promises.push(dbhandler.insertWord(req.params.lang.toLowerCase(), words[i]));
+                                if (res.rows[0].last_updated == null) {
+                                    logger.info('Inserting words into database.\n');
+
+                                    for (var i = 1; i < words.length; i++) {
+                                        promises.push(dbhandler.alterWordList(req.params.lang.toLowerCase(), words[i], 'insert'));
+                                    }
+                                }
+                                else {
+                                    logger.info('Updating words in database.\n');
+
+                                    for (var i = 1; i < words.length; i++) {
+                                        promises.push(dbhandler.alterWordList(req.params.lang.toLowerCase(), words[i], 'update'));
+                                    }
                                 }
 
                                 Promise.all([promises])
                                     .then(values => {
-                                        logger.info('Words inserted successfully.\n\n');
+                                        logger.info('Words inserted/updated successfully.');
+                                        logger.info('Updating age of language.');
+                                        dbhandler.updateLanguageAge(req.params.lang)
+                                            .then((res) => {
+                                                logger.info('Language Age updated successfully\n\n.');
+                                            })
+                                            .catch((err) => {
+                                                logger.error('Problem updating language age: \n' + err + '\n');
+                                            });
                                     })
                                     .catch(err => {
-                                        logger.error('Problem inserting words into database: \n' + err + '\n');
+                                        logger.error('Problem inserting/updating words into database: \n' + err.message + '\n');
                                     });
                             })
                             .catch(err => {

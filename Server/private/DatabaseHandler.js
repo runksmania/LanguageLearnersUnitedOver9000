@@ -193,14 +193,50 @@ module.exports = class DatabaseHandler {
         }.bind(this))
     }
 
-    insertWord(lang_name, data) {
+    alterWordList(lang_name, data, alter_type) {
 
         return new Promise(function (resolve, reject) {
-            var queryString = 'INSERT INTO words_' + lang_name + '\n'
-                + 'VALUES'
-                + '($1,$2,$3);';
+            if (alter_type == 'insert') {
+                var queryString = 'INSERT INTO words_' + lang_name + '\n'
+                    + 'VALUES ($1,$2,$3);';
 
-            this.pool.query(queryString, data, function (err, res) {
+                this.pool.query(queryString, data, function (err, res) {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(res);
+                    }
+                });
+            }
+            else if (alter_type == 'update') {
+                var queryString = 'UPDATE words_' + lang_name + '\n'
+                    + 'SET word = $2, eng_word = $3\n'
+                    + 'WHERE rank_num = $1;';
+
+                this.pool.query(queryString, data, function (err, res) {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(res);
+                    }
+                });
+            }
+            else {
+                reject('Incorrect alter_type specified.  Must be \'insert\' or \'update\'');
+            }
+
+        }.bind(this))
+    }
+
+    updateLanguageAge(lang_name) {
+        return new Promise(function (resolve, reject) {
+            var queryString = 'UPDATE languages\n'
+                + 'SET last_updated = NOW()\n'
+                + 'WHERE lang_name = $1';
+
+            this.pool.query(queryString, [lang_name], function (err, res) {
                 if (err) {
                     reject(err);
                 }
@@ -208,6 +244,6 @@ module.exports = class DatabaseHandler {
                     resolve(res);
                 }
             });
-        }.bind(this))
+        }.bind(this));
     }
 }

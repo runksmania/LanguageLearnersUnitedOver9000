@@ -45,7 +45,7 @@ DROP TABLE IF EXISTS languages CASCADE;
 CREATE TABLE languages
 (
     lang_name    VARCHAR(30),
-    last_updated DATE DEFAULT NOW() NOT NULL,
+    last_updated DATE DEFAULT NULL,
     PRIMARY KEY   (lang_name)
 );
 \echo

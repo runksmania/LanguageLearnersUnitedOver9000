@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION create_lang_tble_procedure()
             rank_num  VARCHAR(5),
             word      VARCHAR(120),
             eng_word  VARCHAR(120),
-            PRIMARY KEY   (rank_num, word)
+            PRIMARY KEY   (rank_num)
         )', 'words_' || LOWER(NEW.lang_name));
         RETURN NEW;
     END;

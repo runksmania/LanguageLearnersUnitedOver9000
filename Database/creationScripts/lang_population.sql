@@ -5,7 +5,7 @@
 
 \echo 'Populating Default languages...'
 INSERT INTO languages
-VALUES('Spanish', NOW() - INTERVAL '3 month'
+VALUES('Spanish'--, NOW() - INTERVAL '3 month'
 );
 
 INSERT INTO languages
@@ -13,5 +13,5 @@ VALUES('French'--, NOW() - INTERVAL '3 month'
 );
 
 INSERT INTO languages
-VALUES('Italian'--, NOW() - INTERVAL '3 month'
+VALUES('Italian'--, NOW()
 );
