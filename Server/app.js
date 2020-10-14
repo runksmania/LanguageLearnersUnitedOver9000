@@ -6,7 +6,7 @@
 const databaseHandler = require('./private/DatabaseHandler');
 const logger = require('./private/logger');
 const Constants = require('./private/Constants');
-const wordsRequest = require('./private/wordsHttpRequest').wordsHttpRequest;
+const updateWordList = require('./private/updateWordsList.js').updateWordsList;
 
 /**
 * Instantiate Classes.
@@ -25,7 +25,6 @@ const session = require('express-session');
 const { body } = require('express-validator');
 const { sanitizeBody } = require('express-validator');
 var flash = require('connect-flash');
-const { type } = require('os');
 
 /**
  *
@@ -128,65 +127,29 @@ app.get('/main', (req, res) => {
 app.get('/main/flashCardGames/?:lang', (req, res) => {
     if (req.session && req.session.user) {
 
-        res.render('flashCardGame', { words_list: ['pineapple', 'orange'], language: 'Russian' });
+        //Get words list for the language and render the view.
+        dbhandler.getWordList(req.params.lang)
+            .then((result) => {
+                var words = [];
 
-        //After rendering page check language age and update database if its been 3 months.
-        dbhandler.languageAgeQuery(req.params.lang)
-            .then(res => {
-                if (res.rows.length == 1) {
-                    var needs_updated = res.rows[0].last_updated == null || Math.floor((Date.now() - res.rows[0].last_updated) / (2592000000)) >= 3 ? true : false;
-
-                    if (needs_updated) {
-                        logger.info('Updating or inserting word list for: ' + req.params.lang);
-                        logger.info('Grabbing word list...');
-                        wordsRequest(req.params.lang.toLowerCase())
-                            .then(words => {
-                                logger.info('List grabbed successfully.\n\n');
-                                var promises = [];
-
-                                if (res.rows[0].last_updated == null) {
-                                    logger.info('Inserting words into database.\n');
-
-                                    for (var i = 1; i < words.length; i++) {
-                                        promises.push(dbhandler.alterWordList(req.params.lang.toLowerCase(), words[i], 'insert'));
-                                    }
-                                }
-                                else {
-                                    logger.info('Updating words in database.\n');
-
-                                    for (var i = 1; i < words.length; i++) {
-                                        promises.push(dbhandler.alterWordList(req.params.lang.toLowerCase(), words[i], 'update'));
-                                    }
-                                }
-
-                                Promise.all([promises])
-                                    .then(values => {
-                                        logger.info('Words inserted/updated successfully.');
-                                        logger.info('Updating age of language.');
-                                        dbhandler.updateLanguageAge(req.params.lang)
-                                            .then((res) => {
-                                                logger.info('Language Age updated successfully\n\n.');
-                                            })
-                                            .catch((err) => {
-                                                logger.error('Problem updating language age: \n' + err + '\n');
-                                            });
-                                    })
-                                    .catch(err => {
-                                        logger.error('Problem inserting/updating words into database: \n' + err.message + '\n');
-                                    });
-                            })
-                            .catch(err => {
-                                logger.error('Problem with grabbing words list: \n' + err + '\n');
-                            });
-                    }
+                for (var i = 0; i < result.length; i++) {
+                    words.push([result[i].word, result[i].eng_word]);
                 }
-                else {
-                    logger.error('No language found for: ' + req.params.lang);
-                }
+
+                res.render('flashCardGame', { words_list: words, language: req.params.lang });
             })
-            .catch(err => {
+            .catch((err) => {
+                logger.error('There was an error attempting to get words list for language:\n' + req.params.lang);
                 logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
             });
+
+        //After rendering the view check if words_* table needs updated.
+        updateWordList(dbhandler, req.params.lang);
     }
     else {
         res.redirect('/');
@@ -212,7 +175,7 @@ app.post('/login', [body('username').trim().escape()], (req, res) => {
 
     dbhandler.attemptLogin(req.body.username, req.body.password, function (err, result) {
         if (err) {
-            logger.error('Therer was an error attempting to login:\n' + req.body.username);
+            logger.error('There was an error attempting to login:\n' + req.body.username);
             logger.error(err);
             var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
                 + ' should this issue persist.';
@@ -290,5 +253,25 @@ app.use((req, res) => {
 });
 
 app.listen(constants.port, constants.host, () => {
-    logger.info('Server is now listening on: ' + constants.host + ':' + constants.port);
+    dbhandler.languageQuery()
+        .then((res) => {
+            var promises = [];
+
+            for (var i = 0; i < res.length; i++) {
+                promises.push(updateWordList(dbhandler, res[i].lang_name));
+            }
+
+            Promise.all(promises)
+                .then((res) => {
+                    logger.info('Server is now listening on: ' + constants.host + ':' + constants.port + '\n');
+                })
+                .catch((err) => {
+                    logger.err('There was an issue attempting to update or initialize words in the database.');
+                    logger.error(err);
+                });
+        })
+        .catch((err) => {
+            throw new Error(err);
+        });
+
 });

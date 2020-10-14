@@ -164,13 +164,21 @@ module.exports = class DatabaseHandler {
     }
 
     //This function queries all languages available.
-    languageQuery(done) {
-        var queryString = 'SELECT lang_name\n'
-            + 'FROM languages;';
+    languageQuery() {
+        return new Promise(function (resolve, reject) {
+            var queryString = 'SELECT lang_name\n'
+                + 'FROM languages;';
 
-        this.pool.query(queryString, function (error, result) {
-            return done(error, result.rows)
-        });
+            this.pool.query(queryString, function (error, result) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                else {
+                    resolve(result.rows);
+                }
+            });
+        }.bind(this))
     }
 
     //This function queries the age of the words of a language.
@@ -185,6 +193,7 @@ module.exports = class DatabaseHandler {
 
                 if (err) {
                     reject(err);
+                    return;
                 }
                 else {
                     resolve(res);
@@ -217,6 +226,7 @@ module.exports = class DatabaseHandler {
                 this.pool.query(queryString, data, function (err, res) {
                     if (err) {
                         reject(err);
+                        return;
                     }
                     else {
                         resolve(res);
@@ -239,9 +249,28 @@ module.exports = class DatabaseHandler {
             this.pool.query(queryString, [lang_name], function (err, res) {
                 if (err) {
                     reject(err);
+                    return;
                 }
                 else {
                     resolve(res);
+                }
+            });
+        }.bind(this));
+    }
+
+    getWordList(lang_name) {
+        return new Promise(function (resolve, reject) {
+            var queryString = 'SELECT *\n'
+                + 'FROM words_' + lang_name + '\n'
+                + 'ORDER BY rank_num::int';
+
+            this.pool.query(queryString, function (err, res) {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                else {
+                    resolve(res.rows);
                 }
             });
         }.bind(this));

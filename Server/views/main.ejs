@@ -5,6 +5,7 @@
     <title>Main Page</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
     <link rel="stylesheet" type="text/css" href="/css/content.css" />
+    <link rel="stylesheet" type="text/css" href="/css/nav.css" />
     <link rel="shortcut icon" href="../graphics/favicon.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/scripts/main.js"></script>
@@ -12,6 +13,14 @@
 
 <body>
 
+    <div class="admin-col-left">
+        <ul class="breadcrumb">
+            <li>
+                <span>Main</span>  <span class="divider">/</span>
+            </li>
+            <breadcrumb></breadcrumb>
+        </ul>
+    </div>
     <h1>Welcome <%= name%></h1>
 
     <h2>LLUO9000 Main Page</h2><br />
@@ -62,7 +71,7 @@
         </div>
     </div>
 
-    <a href="logout">Logout</a>
+    <a id="logoutLink" href="logout">Logout</a>
 
 </body>
 

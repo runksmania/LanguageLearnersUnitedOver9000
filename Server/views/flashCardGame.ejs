@@ -7,6 +7,7 @@
     <script src="/scripts/logout.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/flashCardGame.css" />
     <link rel="stylesheet" type="text/css" href="/css/content.css" />
+    <link rel="stylesheet" type="text/css" href="/css/nav.css" />
     <link rel="shortcut icon" href="../graphics/favicon.png" />
     <% if (words_list){%>
         <script>var word_list = <%- JSON.stringify(words_list) %></script>
@@ -14,15 +15,28 @@
 </head>
 
 <body>
+
+    <div class="admin-col-left">
+        <ul class="breadcrumb">
+            <li>
+                <a href="/main">Main</a> <span class="divider">/</span>
+            </li>
+            <li>
+                <span><%= language %> Flash Card Game
+            <breadcrumb></breadcrumb>
+        </ul>
+    </div>
+
     <div class="contentWrapper">
-        <h4 id="title"><%=language%> Flash Card Game</h4>
+        <h4 id="title"><%=language %> Flash Card Game</h4>
         <div class="content">
             <p id="word" onselectstart="return false"><p>
         </div>
+        <span id="flipText">Click card to flip.</span>
         <input type="button" name="prevWord" value="Previous" id="prev"/>
         <input type="button" name="nextWord" value="Next" id="next"/>
     </div>
-    <a href="logout">Logout</a>
+    <a id="logoutLink" href="logout">Logout</a>
 </body>
 
 </html>

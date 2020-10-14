@@ -11,10 +11,16 @@ body {
     text-align: center;
 }
 
-#word{
-    font-size: 75px;
-    display: table-cell;
-    vertical-align: middle;
+a {
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 20px;
+    color: rgb(0, 118, 190);
+    font-weight: normal;
+}
+
+a:hover {
+    color: red;
 }
 
 .content{
@@ -22,6 +28,20 @@ body {
     margin: 15px;
     display: table;
     cursor: pointer;
+}
+
+#logoutLink{
+    float: left;
+}
+
+#word{
+    font-size: 75px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#flipText{
+    padding: 0;
 }
 
 #prev{
