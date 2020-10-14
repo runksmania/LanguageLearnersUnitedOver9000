@@ -17,7 +17,6 @@ module.exports = class DatabaseHandler {
                 host: 'localhost',
                 user: 'postgres',
                 database: 'LLUO',
-                //password: 'cjuZmiusNxtdgkt3eJ22',
                 port: 5432
             });
 
