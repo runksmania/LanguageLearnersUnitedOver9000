@@ -16,7 +16,8 @@ CREATE TABLE users
     lname         VARCHAR(40)  NOT NULL,
     salt          VARCHAR(40)  NOT NULL,
     pass          VARCHAR(128) NOT NULL,
-    email         VARCHAR(100),
+    email         VARCHAR(100) NOT NULL,
+    lang_pref     VARCHAR(30)  REFERENCES languages,
     access_token  INTEGER,
     first_login   CHAR(1) DEFAULT NULL,
     pass_age      DATE DEFAULT NOW() NOT NULL,
@@ -34,6 +35,19 @@ CREATE TABLE user_prev_pass
     user_num    VARCHAR(4) REFERENCES users,
     prev_pass   VARCHAR(128),
     PRIMARY KEY (user_num, prev_pass)
+);
+\echo
+
+\echo 'Dropping previous user_languages table if exists...'
+DROP TABLE IF EXISTS user_languages CASCADE;
+\echo
+
+\echo 'Creating user_languages table...'
+CREATE TABLE user_languages
+(
+    user_num    VARCHAR(4)  REFERENCES users,
+    lang_name   VARCHAR(30) REFERENCES languages,
+    PRIMARY KEY (user_num, lang_name)
 );
 \echo
 
