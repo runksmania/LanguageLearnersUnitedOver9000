@@ -17,7 +17,7 @@ CREATE TABLE users
     salt          VARCHAR(40)  NOT NULL,
     pass          VARCHAR(128) NOT NULL,
     email         VARCHAR(100) NOT NULL,
-    lang_pref     VARCHAR(30)  REFERENCES languages,
+    lang_pref     VARCHAR(30)  REFERENCES languages(lang_name),
     access_token  INTEGER,
     first_login   CHAR(1) DEFAULT NULL,
     pass_age      DATE DEFAULT NOW() NOT NULL,
