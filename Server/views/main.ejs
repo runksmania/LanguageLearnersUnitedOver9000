@@ -30,18 +30,29 @@
             <div class="panel">
                 <h4>Flash Card Games</h4>
                 <ul>
-                    <li>
-                        <a href="main/flashCardGames/Spanish">Spanish</a>
-                    </li>
-                    <li>
-                        <a href="main/flashCardGames/Italian">Italian</a>
-                    </li>
-                    <li>
-                        <a href="main/flashCardGames/French">French</a>
-                    </li>
-                    <li>
-                        <a href="main/flashCardGames/Irish">Irish</a>
-                    </li>
+                    <% if (langPref == 'Spanish' || accessToken == 1) {%>
+                        <li>
+                            <a href="main/flashCardGames/Spanish">Spanish</a>
+                        </li>
+                    <%}%>
+
+                    <% if (langPref == 'Italian' || accessToken == 1) {%>
+                        <li>
+                            <a href="main/flashCardGames/Italian">Italian</a>
+                        </li>
+                    <%}%>
+
+                    <% if (langPref == 'French' || accessToken == 1) {%>
+                        <li>
+                            <a href="main/flashCardGames/French">French</a>
+                        </li>
+                    <%}%>
+
+                    <% if (langPref == 'Irish' || accessToken == 1) {%>
+                        <li>
+                            <a href="main/flashCardGames/Irish">Irish</a>
+                        </li>
+                    <%}%>
                 </ul>
             </div>
             <div class="panel">
