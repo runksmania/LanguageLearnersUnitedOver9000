@@ -110,7 +110,7 @@ app.get('/resetPassword', (req, res) => {
 
 app.get('/main', (req, res) => {
     if (req.session && req.session.user) {
-        let data = { name: req.session.user.name, accessToken: req.session.user.accessToken };
+        let data = { name: req.session.user.name, langPref: req.session.user.langPref, accessToken: req.session.user.accessToken };
 
         if (req.session.user.resetPass == true) {
             res.redirect('/resetPassword');

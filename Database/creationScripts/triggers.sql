@@ -15,15 +15,29 @@ CREATE OR REPLACE FUNCTION prev_pass_procedure()
 $prev_pass_procedure$ LANGUAGE plpgsql;
 \echo
 
-\echo "Dropping prev_pass_trigger if exists..."
-DROP TRIGGER IF EXISTS prev_pass_trig ON languages CASCADE;
+\echo "Dropping prev_pass_trigger_update if exists..."
+DROP TRIGGER IF EXISTS prev_pass_trig_update ON users CASCADE;
 \echo
 
-\echo "Creating prev_pass_trigger..."
-CREATE  TRIGGER prev_pass_trig 
-    AFTER UPDATE OR INSERT
+\echo "Creating prev_pass_trigger_update..."
+CREATE  TRIGGER prev_pass_trig_update
+    AFTER UPDATE
     ON users
-    FOR EACH ROW EXECUTE PROCEDURE prev_pass_procedure();
+    FOR EACH ROW
+    WHEN (OLD.pass IS DISTINCT FROM NEW.pass)
+    EXECUTE PROCEDURE prev_pass_procedure();
+\echo
+
+\echo "Dropping prev_pass_trigger_insert if exists..."
+DROP TRIGGER IF EXISTS prev_pass_trig_insert ON users CASCADE;
+\echo
+
+\echo "Creating prev_pass_trigger_insert..."
+CREATE  TRIGGER prev_pass_trig_insert
+    AFTER INSERT
+    ON users
+    FOR EACH ROW
+    EXECUTE PROCEDURE prev_pass_procedure();
 \echo
 
 \echo "Creating function create_lang_tbl_procedure..."

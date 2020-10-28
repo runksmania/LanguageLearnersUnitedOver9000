@@ -55,6 +55,7 @@ module.exports = class DatabaseHandler {
                 user.name = result.fname + ' ' + result.lname;
                 user.email = result.email;
                 user.accessToken = result.access_token;
+                user.langPref = result.lang_pref;
 
                 //Todays date - last pass change date / ms in 3 months.
                 var passAge = Math.floor((Date.now() - result.pass_age) / (2592000000))
