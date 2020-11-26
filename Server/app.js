@@ -7,6 +7,7 @@ const databaseHandler = require('./private/DatabaseHandler');
 const logger = require('./private/logger');
 const Constants = require('./private/Constants');
 const updateWordList = require('./private/updateWordsList.js').updateWordsList;
+const getPageContent = require('./private/wikipediaAPIRequest.js').getPageContent;
 
 /**
 * Instantiate Classes.
@@ -150,6 +151,41 @@ app.get('/main/flashCardGames/?:lang', (req, res) => {
 
         //After rendering the view check if words_* table needs updated.
         updateWordList(dbhandler, req.params.lang);
+    }
+    else {
+        res.redirect('/');
+    }
+});
+
+app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
+    if (req.session && req.session.user) {
+
+        //Get page name from database for language and fact type.
+        dbhandler.getFactPageName(req.params.lang, req.params.factType)
+            .then(pageName => {
+                logger.debug(pageName);
+
+                //Get facts list for the language and and fact type then render to view.
+                getPageContent(pageName)
+                .then(results => {
+                    logger.debug(results[0].parse.wikitext);
+                    res.render('languageFacts', {facts: results, language: req.params.lang, factType: req.params.factType});
+                })
+
+                .catch(err => {
+                    logger.error('There was an error attempting to get words list for language:\n' + req.params.lang);
+                    logger.error(err);
+                    var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                        + ' should this issue persist.';
+                    req.flash('info', 'requestError');
+                    req.flash('requestError', flashMessage);
+                    res.redirect('/');
+                });
+            })
+
+            .catch(err => {
+
+            });        
     }
     else {
         res.redirect('/');

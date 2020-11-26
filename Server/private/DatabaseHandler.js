@@ -76,16 +76,6 @@ module.exports = class DatabaseHandler {
         });
     }
 
-    deptQuery(done) {
-        var queryString = 'SELECT dept_num, dept_name\n'
-            + 'FROM dept\n'
-            + 'WHERE has_emp IS NOT NULL;';
-
-        this.pool.query(queryString, function (err, res) {
-            return done(err, res);
-        });
-    }
-
     //This function adds a new user into the database.
     addNewUser(emp_id, username, fname, lname, dept, email, pass, accessToken, done) {
         var salt = hash.createSalt();
@@ -200,6 +190,36 @@ module.exports = class DatabaseHandler {
                 }
             });
         }.bind(this))
+    }
+
+    getFactPageName(lang_name, factType){
+
+        var dict = {
+            'language' : 'language_page',
+            'country' : 'country_page',
+            'culture' : 'culture_page'
+        };
+
+        factType = dict[factType];
+
+        return new Promise(function (resolve, reject){
+
+            var queryString = 'SELECT ' + factType + '\n'
+                + 'FROM facts_pages\n'
+                + 'WHERE lang_name = $1;';
+
+            this.pool.query(queryString, [lang_name], function(err, res){
+
+                if (err){
+                    logger.error(err);
+                    reject(err);
+                }
+                else{
+                    resolve(res.rows[0][factType]);
+
+                }
+            });            
+        }.bind(this));
     }
 
     alterWordList(lang_name, data, alter_type) {

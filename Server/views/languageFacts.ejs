@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/scripts/flashCardGame.js"></script>
+    <script src="/scripts/logout.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/flashCardGame.css" />
+    <link rel="stylesheet" type="text/css" href="/css/content.css" />
+    <link rel="stylesheet" type="text/css" href="/css/nav.css" />
+    <link rel="shortcut icon" href="../graphics/favicon.png" />
+    <% if (facts){%>
+        <script>var facts = <%- JSON.stringify(facts) %></script>
+    <%}%>
+</head>
+
+<body>
+
+    <div class="admin-col-left">
+        <ul class="breadcrumb">
+            <li>
+                <a href="/main">Main</a> <span class="divider">/</span>
+            </li>
+            <li>
+                <span><%= language %> <%= factType %> facts</span>
+            <breadcrumb></breadcrumb>
+        </ul>
+    </div>
+
+    <div class="contentWrapper">
+        <h4 id="title"><%= language %> <%= factType %> facts</h4>
+        <div class="content">
+        <p> <%= facts[0].parse.wikitext['*'] %> </p>
+        </div>
+    </div>
+    <a id="logoutLink" href="logout">Logout</a>
+</body>
+
+</html>

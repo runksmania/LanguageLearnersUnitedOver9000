@@ -76,9 +76,9 @@ DROP TABLE IF EXISTS facts_pages CASCADE;
 CREATE TABLE facts_pages
 (
     lang_name      VARCHAR(30) REFERENCES languages,
-    language_link  VARCHAR,
-    country_link   VARCHAR,
-    culutural_link VARCHAR    
+    language_page  VARCHAR,
+    country_page   VARCHAR,
+    culutural_page VARCHAR    
 );
 \echo
 
