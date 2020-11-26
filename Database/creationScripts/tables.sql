@@ -68,12 +68,12 @@ CREATE TABLE languages
 \i dropWordsTables.sql
 \echo
 
-\echo 'Dropping facts_links table if exists...'
-DROP TABLE IF EXISTS facts_links CASCADE;
+\echo 'Dropping facts_pages table if exists...'
+DROP TABLE IF EXISTS facts_pages CASCADE;
 \echo
 
-\echo 'Creating facts_links table...'
-CREATE TABLE facts_links
+\echo 'Creating facts_pages table...'
+CREATE TABLE facts_pages
 (
     lang_name      VARCHAR(30) REFERENCES languages,
     language_link  VARCHAR,

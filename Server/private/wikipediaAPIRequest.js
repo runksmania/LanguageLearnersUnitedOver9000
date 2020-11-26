@@ -9,14 +9,14 @@ module.exports = {
     //Function wrapper for http get function to get the wiki page sections for the page provided.
     //Takes a string argument which page name.
     //Returns random section from the page.
-    wikiGetRandomSection: function(page){
+    wikiGetRandomSection: function(pageName){
         //Create a promise so that .then() can be used to wait for the http.get request to be finished and data parsed.
         return new Promise(function (resolve, reject){
             url = 'https://en.wikipedia.org/w/api.php?' + 
                 new URLSearchParams({
                     origin: '*',
                     action: 'parse',
-                    page: 'Italian_language',
+                    page: pageName,
                     format: 'json'
                 });
             https.get(url, (res) =>{
@@ -61,7 +61,7 @@ module.exports = {
 
 //Example on how to use the function above.
 const wikiGetRandomSection = require('./wikipediaAPIRequest.js').wikiGetRandomSection;
-wikiGetRandomSection('https://en.wikipedia.org/w/api.php?action=parse&page=Italian_language&prop=text&formatversion=2')
+wikiGetRandomSection('Italian_language')
     .then(res => {
         console.log(res);        
     })
