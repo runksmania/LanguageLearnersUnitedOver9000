@@ -1,7 +1,7 @@
 const https = require('https');
 const cheerio = require('cheerio');
 
-ignoreList = ['See also', 'Notes', 'References', 'Bibliography', 'External links']
+ignoreDict = {'See also': 1, 'Notes' : 1, 'References' : 1, 'Bibliography' : 1, 'External links' : 1, 'Footnotes' : 1}
 
 //Function wrapper for http get function to get the wiki page sections for the page provided.
 //Takes a string argument which page name.
@@ -37,7 +37,7 @@ function wikiGetRandomSection(pageName){
                     else if (sections[count][0].number == Math.floor(sectionList[i].number)){
                         sections[count].push(sectionList[i]);
                     }
-                    else if (!ignoreList.includes(sectionList[i].line)){
+                    else if (!ignoreDict[sectionList[i].line]){
                         sections.push([sectionList[i]]);
                         count++;
                     }
@@ -64,7 +64,7 @@ function wikiGetPageData(pageName, sectionNumber){
             action: 'parse',
             page: pageName,
             section: sectionNumber,
-            prop: 'wikitext',
+            prop: 'text',
             format: 'json'
         });
 
@@ -125,7 +125,7 @@ module.exports = {
 getPageContent('Italian_language')
     .then(res => {
         for (i of res)   {
-            console.log(JSON.stringify(i.parse.wikitext['*']));
+            console.log(JSON.stringify(i.parse.text['*']));
         }
     })
 

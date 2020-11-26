@@ -163,12 +163,10 @@ app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
         //Get page name from database for language and fact type.
         dbhandler.getFactPageName(req.params.lang, req.params.factType)
             .then(pageName => {
-                logger.debug(pageName);
 
                 //Get facts list for the language and and fact type then render to view.
                 getPageContent(pageName)
                 .then(results => {
-                    logger.debug(results[0].parse.wikitext);
                     res.render('languageFacts', {facts: results, language: req.params.lang, factType: req.params.factType});
                 })
 

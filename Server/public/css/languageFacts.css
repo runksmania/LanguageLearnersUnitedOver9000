@@ -1,0 +1,98 @@
+body{
+    height: 100%;
+    color: black;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    padding: 70px;
+    background: url(../graphics/Background.jpg) repeat-x #b8b6b7;
+    font-family: Arial, sans-serif;
+}
+
+.contentWrapper {
+    color: #000;
+    border-radius: 30px;
+    -webkit-box-shadow: 0px 0px 5px #333, 0px 0px 0px #000, 0px 0px 5px #333, 0px 0px 0px #000;
+    box-shadow: 0px 0px 5px #333, 0px 0px 0px #000, 0px 0px 5px #333, 0px 0px 0px #000;
+    border: 1px solid black;
+    background-color: white;
+    background-image: -webkit-gradient( linear, left bottom, left top, color-stop(-0.0, #C6C6C6), color-stop(0.8, #E1E1E1), color-stop(1.0, #F8F8F8));
+    z-index: 1;
+    display: table;
+    position: relative;
+    padding: 15px;
+}
+
+.content {
+    border-radius: 30px;
+    padding: 10px;
+    background: white;
+    overflow: auto;
+    width: 75vw;
+}
+
+.wikitable.plainrowheaders th[scope=row]{
+    font-weight:normal;
+    text-align:left;
+}
+
+.wikitable td ul,.wikitable td ol,.wikitable td dl{
+    text-align:left;
+}
+
+.toc.hlist ul,#toc.hlist ul,.wikitable.hlist td ul,.wikitable.hlist td ol,.wikitable.hlist td dl{
+    text-align:inherit;
+}
+
+.listenlist{
+    background:url(http://www.upload.wikimedia.org/wikipedia/commons/4/47/Sound-icon.svg) no-repeat scroll 0 0 transparent;
+    background-size:30px;padding-left:40px
+}
+
+.wikitable > tr > th, .wikitable > tr > td, .wikitable > * > tr > th, .wikitable > * > tr > td {
+    border: 1px solid #a2a9b1;
+    padding: 0.2em 0.4em;
+}
+
+td {
+    display: table-cell;
+    vertical-align: inherit;
+}
+
+.wikitable {
+    background-color: #f8f9fa;
+    color: #202122;
+    margin: 1em 0;
+    border: 1px solid #a2a9b1;
+    border-collapse: collapse;
+}
+
+.toc {
+    display: table;
+    padding: 7px;
+}
+.toc, .mw-warning, .toccolours {
+    border: 1px solid #a2a9b1;
+    background-color: #f8f9fa;
+    padding: 5px;
+    font-size: 95%;
+}
+
+html .thumbcaption {
+    border: 0;
+    line-height: 1.4em;
+    padding: 3px;
+    font-size: 94%;
+    text-align: left;
+}
+
+div.thumbinner {
+    border: 1px solid #c8ccd1;
+    padding: 3px;
+    background-color: #f8f9fa;
+    font-size: 94%;
+    text-align: center;
+    overflow: hidden;
+}

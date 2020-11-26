@@ -197,7 +197,7 @@ module.exports = class DatabaseHandler {
         var dict = {
             'language' : 'language_page',
             'country' : 'country_page',
-            'culture' : 'culture_page'
+            'culture' : 'culutural_page'
         };
 
         factType = dict[factType];
