@@ -67,3 +67,31 @@ CREATE TABLE languages
 \echo 'Dropping all language word tables if exists...'
 \i dropWordsTables.sql
 \echo
+
+\echo 'Dropping facts_links table if exists...'
+DROP TABLE IF EXISTS facts_links CASCADE;
+\echo
+
+\echo 'Creating facts_links table...'
+CREATE TABLE facts_links
+(
+    lang_name      VARCHAR(30) REFERENCES languages,
+    language_link  VARCHAR,
+    country_link   VARCHAR,
+    culutural_link VARCHAR    
+);
+\echo
+
+\echo 'Dropping messages table if exists...'
+DROP TABLE IF EXISTS messages CASCADE;
+\echo
+
+\echo 'Creating messages table...'
+CREATE TABLE messages
+(
+    user_to_num   VARCHAR(4) REFERENCES users,
+    user_from_num VARCHAR(4) REFERENCES users,
+    user_message  VARCHAR,
+    sent_date     DATE DEFAULT NOW()
+);
+\echo

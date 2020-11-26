@@ -19,3 +19,37 @@ VALUES('Italian'--, NOW()
 INSERT INTO languages
 VALUES('Irish'--, NOW()
 );
+\echo
+
+\echo 'Populating default facts_links....'
+INSERT INTO facts_links
+VALUES(
+   'Spanish',
+   'https://en.wikipedia.org/wiki/Spanish_language',
+   'https://en.wikipedia.org/wiki/Spain',
+   'https://en.wikipedia.org/wiki/Culture_of_Spain'
+);
+
+INSERT INTO facts_links
+VALUES(
+   'French',
+   'https://en.wikipedia.org/wiki/French_language',
+   'https://en.wikipedia.org/wiki/France',
+   'https://en.wikipedia.org/wiki/Culture_of_France'
+);
+
+INSERT INTO facts_links
+VALUES(
+   'Italian',
+   'https://en.wikipedia.org/wiki/Italian_language',
+   'https://en.wikipedia.org/wiki/Italy',
+   'https://en.wikipedia.org/wiki/Culture_of_Italy'
+);
+
+INSERT INTO facts_links
+VALUES(
+   'Irish',
+   'https://en.wikipedia.org/wiki/Irish_language',
+   'https://en.wikipedia.org/wiki/Ireland',
+   'https://en.wikipedia.org/wiki/Culture_of_Ireland'
+);
