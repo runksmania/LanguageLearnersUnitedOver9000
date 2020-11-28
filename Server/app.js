@@ -190,17 +190,42 @@ app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
     }
 });
 
-app.get('/main/users/search/language/?:lang', (req, res) =>{
+app.get('/main/users/search/language/:lang', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
         dbhandler.getUserList(req.params.lang, {})
             .then(results => {
-                res.render('searchUsers', {users: results, langPref: req.params.lang});
+                res.render('searchUsers', {users: results});
             })
 
             .catch(err => {
+                logger.error('There was an error attempting to get user list for language:\n' + req.params.lang);
+                logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
+            });        
+    }
+    else {
+        res.redirect('/');
+    }
+});
 
+app.get('/main/users/search/language/:lang/search', (req, res) =>{
+    if (req.session && req.session.user) {
+
+        //Get list of users that speak specified language.
+        dbhandler.getUserList(req.params.lang, req.query)
+            .then(results => {
+                res.send(results);
+            })
+
+            .catch(err => {
+                logger.error('There was an error attempting to get user list for language:\n' + req.params.lang);
+                logger.error(err);
             });        
     }
     else {

@@ -310,9 +310,9 @@ module.exports = class DatabaseHandler {
                 + 'WHERE users.user_num = user_languages.user_num\n'
                 + 'AND lang_name = $1';
 
-                var parameters = [lang_name]
+            var parameters = [lang_name]
 
-            if (opts['narrow']){
+            if (opts && opts['narrow']){
                 var queryString = 'SELECT DISTINCT users.user_num, username, fname, lang_pref\n'
                 + 'FROM users, user_languages\n'
                 + 'WHERE users.user_num = user_languages.user_num\n'
@@ -321,45 +321,48 @@ module.exports = class DatabaseHandler {
                 parameters = [opts['narrow'], '%' + opts['narrow'] + '%'];
             }
 
-                this.pool.query(queryString, parameters)
-                    .then(res => {
-                        res = res.rows
-                        var promises = [];
+            this.pool.query(queryString, parameters)
+                .then(res => {
+                    res = res.rows
+                    var promises = [];
 
-                        if (res.length > 0){
-                            for (var i of res){
-                                queryString = 'SELECT lang_name\n'
-                                    + 'FROM user_languages\n'
-                                    + 'WHERE user_num = $1';
-    
-                                promises.push(this.pool.query(queryString, [i['user_num']]));
-                            }
-    
-                            Promise.all(promises)
-                                .then(results =>{
-    
-                                    for (var i = 0; i < res.length; i++){
-                                        var languages = []
-    
-                                        for (var j of results[i].rows){
-                                            languages.push(j['lang_name']);
-                                        }
-                                        
-                                        res[i]['languages'] = languages.join(', ');
-                                    }
-    
-                                    resolve(res);
-                                })
-                                
-                                .catch(err => {
-                                    return Promise.reject(err);
-                                });
+                    if (res.length > 0){
+                        for (var i of res){
+                            queryString = 'SELECT lang_name\n'
+                                + 'FROM user_languages\n'
+                                + 'WHERE user_num = $1';
+
+                            promises.push(this.pool.query(queryString, [i['user_num']]));
                         }
-                    })
 
-                    .catch(err =>{
-                        return Promise.reject(err);
-                    });
+                        Promise.all(promises)
+                            .then(results =>{
+
+                                for (var i = 0; i < res.length; i++){
+                                    var languages = []
+
+                                    for (var j of results[i].rows){
+                                        languages.push(j['lang_name']);
+                                    }
+                                    
+                                    res[i]['languages'] = languages.join(', ');
+                                }
+
+                                resolve(res);
+                            })
+                            
+                            .catch(err => {
+                                return Promise.reject(err);
+                            });
+                    }
+                    else{
+                        resolve([]);
+                    }
+                })
+
+                .catch(err =>{
+                    return Promise.reject(err);
+                });
         }.bind(this));
     }
 }

@@ -10,7 +10,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script src="/scripts/searchUsers.js"></script>
-    <script>var langPref = <%- JSON.stringify(langPref) %></script>
 </head>
 <body>
 
@@ -34,9 +33,9 @@
 
             <div class="searchUi">
 
-                <label>Search Parameters</label>
+                <label>Search by Name or Username</label>
 
-                <div class="searchWrapper" style="visibility: hidden;" >
+                <div class="searchWrapper">
                     <input class="searchField" type="search" placeholder="Search Names" name="search" />
                 </div>
             </div>

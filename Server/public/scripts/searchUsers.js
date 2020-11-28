@@ -18,16 +18,11 @@ $(document).ready(function ()
     function searchRequests(searchInput)
     {
         var urlString = window.location.pathname + '/search';
-        
-        if ($('#parameters').val() == null)
-        {
-            $('#parameters').val('');
-        }
 
         $.ajax({
             method: "get",
             url: urlString,
-            data: { narrow: $('#parameters').val(), search: searchInput , 'langPref': langPref}
+            data: {narrow: searchInput}
         })
             .done(function (result)
             {
@@ -61,24 +56,25 @@ $(document).ready(function ()
             for (var i = 0; i < searchResults.length; i++)
             {
                 tableRowString += '<tr>\n';
+                var name = searchResults[i]['username'];
                 
                 for (var property in searchResults[i])
                 {
-                    if (property != 'user_num')
+                    if (property != 'user_num' && property != 'username')
                     {
-                        tableRowString += '<td>' + property + '</td>\n';
+                        tableRowString += '<td>' + searchResults[i][property] + '</td>\n';
+                    }
+                    else if (property == 'username'){
+                        tableRowString += '<td><a href="' + window.location.origin + '/main/users/num/' + searchResults[i]['user_num']
+                        + '/username/' + name + '">' + name + '</a></td>';
                     }
                     else 
                     {
-                        tableRowString += '<td style="display: none;">' + '<input type="text" name="' 
-                            + property + '" value="'
-                            + searchResults[i][property] + '"></td>\n';
+                        tableRowString += '<td style="display: none; name="' 
+                            + property + '">'
+                            + searchResults[i][property] + '</td>\n';
                     }
-                }
-
-                var name = searchResults[i]['user_name'];
-                tableRowString += '<td><a href="' + window.location.origin + '/main/users/num/' + searchResults[i]['user_num']
-                    + '/username/' + name + '">' + 'View Items' + '</a></td>';
+                }                
                 
                 tableRowString += '</tr>\n';
             }

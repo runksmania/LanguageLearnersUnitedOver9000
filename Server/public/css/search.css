@@ -22,24 +22,6 @@
     cursor: default;
 }
 
-.tooltip {
-    display: inline-block;
-    background: rgba(255,0,0,1);
-    color: #fff;
-    text-align: center;
-    border-radius: 20px;
-    padding: 5px;
-    margin: 5px;
-}
-
-.searchWrapper {
-    display: inline-flex;
-    padding: 0px;
-    border-radius: 20px;
-    background: rgba(255,0,0,1);
-    margin: 0px 0px 30px 10px;
-}
-
 .searchField{
     display: inline-table;
     border-radius: 20px;
