@@ -8,6 +8,7 @@ DELETE FROM users;
 \echo
 
 \echo 'Inserting default users...\n'
+\echo
 INSERT INTO users
 VALUES
 (57, 
@@ -22,7 +23,20 @@ VALUES
 1,
 Now()-- - INTERVAL '3 month'
 );
-\echo
+
+INSERT INTO user_languages
+VALUES
+(
+   57,
+   'English'
+);
+
+INSERT INTO user_languages
+VALUES
+(
+   57,
+   'Italian'
+);
 
 INSERT INTO users
 VALUES
@@ -38,4 +52,10 @@ VALUES
 NULL,
 Now()
 );
-\echo
+
+INSERT INTO user_languages
+VALUES
+(
+   280,
+   'English'
+);

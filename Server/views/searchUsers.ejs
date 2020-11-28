@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Search</title>
+    <link rel="stylesheet" type="text/css" href="/css/searchUsers.css" />
+    <link rel="stylesheet" type="text/css" href="/css/basicResultsTable.css" />
+    <link rel="stylesheet" type="text/css" href="/css/search.css" />
+    <link rel="stylesheet" type="text/css" href="/css/nav.css" />
+    <link rel="shortcut icon" href="/graphics/favicon.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+    <script src="/scripts/searchUsers.js"></script>
+    <script>var langPref = <%- JSON.stringify(langPref) %></script>
+</head>
+<body>
+
+    <div class="admin-col-left">
+        <ul class="breadcrumb">
+            <li>
+                <a href="/main">Main</a> <span class="divider">/</span>
+            </li>
+            <li>
+                <span>User Search</span>
+            </li>
+            <breadcrumb></breadcrumb>
+        </ul>
+    </div>
+
+    <p class="noResults" style="display:none">Nothing was found with those parameters. Please try again</p>
+
+    <div class="sidePanelWrapper">
+
+        <div class="contentWrapper">
+
+            <div class="searchUi">
+
+                <label>Search Parameters</label>
+
+                <div class="searchWrapper" style="visibility: hidden;" >
+                    <input class="searchField" type="search" placeholder="Search Names" name="search" />
+                </div>
+            </div>
+                <div class="usersView">
+                    <div class="resultsTable">
+                        <div class="content">
+                            <form>
+                                <table cellpadding="0" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>First Name</th>
+                                            <th>Language Learning</th>
+                                            <th>Languages Known</th>
+                                        </tr>
+                                        <tbody>
+                                            <% for (var i = 0; i < users.length; i++) { %>
+                                                <tr>
+                                                    <% for (var property in users[i]) { %>
+                                                        <% if (property != 'user_num' && property != 'username') { %>
+                                                            <td><%= users[i][property] %></td>
+                                                        <% } else if (property == 'username') { %>
+                                                            <td><a href="/main/users/num/<%= users[i]['user_num'] %>/username/<%=users[i][property] %>"><%= users[i][property] %></a></td>
+                                                        <% } else { %>
+                                                            <td name="<%= property %>" style="display: none;"><%= users[i][property] %></td>
+                                                        <% } %>
+                                                    <% } %>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </thead>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <a href="logout">Logout</a>
+</body>
+</html>

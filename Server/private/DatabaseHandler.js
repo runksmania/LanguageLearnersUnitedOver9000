@@ -192,6 +192,7 @@ module.exports = class DatabaseHandler {
         }.bind(this))
     }
 
+    //This function queries the database for the appropriate pageName for the language and fact type specified.
     getFactPageName(lang_name, factType){
 
         var dict = {
@@ -222,6 +223,7 @@ module.exports = class DatabaseHandler {
         }.bind(this));
     }
 
+    //This function updates the word table for a language.
     alterWordList(lang_name, data, alter_type) {
 
         return new Promise(function (resolve, reject) {
@@ -260,6 +262,7 @@ module.exports = class DatabaseHandler {
         }.bind(this))
     }
 
+    //This function updates the age of the word table for a language.
     updateLanguageAge(lang_name) {
         return new Promise(function (resolve, reject) {
             var queryString = 'UPDATE languages\n'
@@ -278,6 +281,7 @@ module.exports = class DatabaseHandler {
         }.bind(this));
     }
 
+    //This function gets the word list for a language.
     getWordList(lang_name) {
         return new Promise(function (resolve, reject) {
             var queryString = 'SELECT *\n'
@@ -293,6 +297,69 @@ module.exports = class DatabaseHandler {
                     resolve(res.rows);
                 }
             });
+        }.bind(this));
+    }
+
+    //This function gets a list of users who are fluent in the language specified.
+    //Options:
+    //  narrow: Uses this variable to narrow by username or fname.
+    getUserList(lang_name, opts){
+        return new Promise(function (resolve, reject) {
+            var queryString = 'SELECT users.user_num, username, fname, lang_pref\n'
+                + 'FROM users, user_languages\n'
+                + 'WHERE users.user_num = user_languages.user_num\n'
+                + 'AND lang_name = $1';
+
+                var parameters = [lang_name]
+
+            if (opts['narrow']){
+                var queryString = 'SELECT DISTINCT users.user_num, username, fname, lang_pref\n'
+                + 'FROM users, user_languages\n'
+                + 'WHERE users.user_num = user_languages.user_num\n'
+                + 'AND username = $1\n'
+                + 'OR fname ILIKE $2';
+                parameters = [opts['narrow'], '%' + opts['narrow'] + '%'];
+            }
+
+                this.pool.query(queryString, parameters)
+                    .then(res => {
+                        res = res.rows
+                        var promises = [];
+
+                        if (res.length > 0){
+                            for (var i of res){
+                                queryString = 'SELECT lang_name\n'
+                                    + 'FROM user_languages\n'
+                                    + 'WHERE user_num = $1';
+    
+                                promises.push(this.pool.query(queryString, [i['user_num']]));
+                            }
+    
+                            Promise.all(promises)
+                                .then(results =>{
+    
+                                    for (var i = 0; i < res.length; i++){
+                                        var languages = []
+    
+                                        for (var j of results[i].rows){
+                                            languages.push(j['lang_name']);
+                                        }
+                                        
+                                        res[i]['languages'] = languages.join(', ');
+                                    }
+    
+                                    resolve(res);
+                                })
+                                
+                                .catch(err => {
+                                    return Promise.reject(err);
+                                });
+                        }
+                    })
+
+                    .catch(err =>{
+                        return Promise.reject(err);
+                    });
         }.bind(this));
     }
 }

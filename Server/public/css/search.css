@@ -1,0 +1,65 @@
+.noResults{
+    text-align: center;
+    font-weight: bold;
+}
+
+.searchUi {
+    display: block ruby;
+}
+
+.searchUi .info{
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    background: rgba(255,0,0,1);
+    display: inline-table;
+    padding: 5px;
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    margin: 5px;
+    text-align: center;
+    cursor: default;
+}
+
+.tooltip {
+    display: inline-block;
+    background: rgba(255,0,0,1);
+    color: #fff;
+    text-align: center;
+    border-radius: 20px;
+    padding: 5px;
+    margin: 5px;
+}
+
+.searchWrapper {
+    display: inline-flex;
+    padding: 0px;
+    border-radius: 20px;
+    background: rgba(255,0,0,1);
+    margin: 0px 0px 30px 10px;
+}
+
+.searchField{
+    display: inline-table;
+    border-radius: 20px;
+    margin: 10px;
+    width: 300px;
+    text-indent: 5px;
+    font-weight: bold;
+}
+
+.searchField::placeholder {
+    opacity: 1;
+}
+
+.searchField:focus{
+    box-shadow: 0 0 6px rgba(81, 203, 238, 1);
+}
+
+input[type=button] {
+    color:white;
+    background:#3c3;
+    padding: 5px 20px;
+    margin-left: 10px;
+}

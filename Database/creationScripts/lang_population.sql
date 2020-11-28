@@ -19,6 +19,10 @@ VALUES('Italian'--, NOW()
 INSERT INTO languages
 VALUES('Irish'--, NOW()
 );
+
+INSERT INTO languages
+VALUES('English'--, NOW()
+);
 \echo
 
 \echo 'Populating default facts_pages....'

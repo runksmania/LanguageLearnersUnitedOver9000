@@ -1,0 +1,60 @@
+
+/**************************************************************************************************
+* This css file handles the general table styling for pages that does not have any special needs. *
+**************************************************************************************************/
+
+h2 {
+    text-align: center;
+}
+
+.fixedHeader {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table {
+    border: solid black 3px;
+    border-radius: 15px;
+    white-space: nowrap;    
+}
+
+th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-top: none;
+    padding: 2px;
+}
+
+th:first-child {
+    border-left: none;
+    border-top: none;
+}
+
+th:last-child {
+    border-right: none;
+}
+
+td:first-child, td:first-child + td{
+    border-left: none;
+}
+
+td:last-child {
+    border-bottom: none;
+    border-right: none;
+}
+
+.fixedHeader thead {
+    display: table-header-group;
+    position: relative;
+}
+
+tbody td {
+    width: 100%;
+    border: 1px solid black;
+    border-bottom: none;
+    padding: 2px;
+}
+
+tbody tr:nth-child(even) {
+    background-color: lightgrey;
+}

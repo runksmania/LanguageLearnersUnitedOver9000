@@ -190,6 +190,24 @@ app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
     }
 });
 
+app.get('/main/users/search/language/?:lang', (req, res) =>{
+    if (req.session && req.session.user) {
+
+        //Get list of users that speak specified language.
+        dbhandler.getUserList(req.params.lang, {})
+            .then(results => {
+                res.render('searchUsers', {users: results, langPref: req.params.lang});
+            })
+
+            .catch(err => {
+
+            });        
+    }
+    else {
+        res.redirect('/');
+    }
+});
+
 app.get('*/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
@@ -292,7 +310,10 @@ app.listen(constants.port, constants.host, () => {
             var promises = [];
 
             for (var i = 0; i < res.length; i++) {
-                promises.push(updateWordList(dbhandler, res[i].lang_name));
+
+                if (res[i].lang_name != 'English'){
+                    promises.push(updateWordList(dbhandler, res[i].lang_name));
+                }
             }
 
             Promise.all(promises)
