@@ -238,7 +238,14 @@ app.get('/register', (req, res) => {
         
         dbhandler.languageQuery()
             .then(results =>{
-                res.render('register', {langList: results});
+                var resultsAlphabetical = []
+                
+                for (var i = 0; i < results.length; i++){
+                    resultsAlphabetical.push(results[i].lang_name);
+                }
+
+                resultsAlphabetical.sort();
+                res.render('register', {langList: resultsAlphabetical, issue: null});
             })
 
             .catch(err =>{
@@ -296,6 +303,70 @@ app.post('/login', [body('username').trim().escape()], (req, res) => {
         }
     });
 
+});
+
+app.post('/registerUser', (req, res) => {
+    if (!req.session || !req.session.user){
+
+        dbhandler.addNewUser(req.body.username, req.body.fname, req.body.lname, req.body.email, req.body.langPref, req.body.password)
+            .then(result =>{
+
+                switch(result[0]){
+
+                    case('success'):
+                        logger.info('There has been a new user registered for user: ' + req.body.username);
+                        var flashMessage = 'You have now been registered. Please login to your new account.';
+                        req.flash('info', 'Successful Registration');
+                        req.flash('Successful Registration', flashMessage);
+                        res.redirect('/');
+                        return;
+
+                    case('Username'):
+                        logger.info('Duplicate username found when attempting to register user: ' + req.body.username);
+                        break;
+
+                    case('Email'):
+                        logger.info('Duplicate email found when attempting to register user: ' + req.body.username);
+                        logger.info('Duplicate email: ' + req.body.email);
+                        break;
+                }
+
+                dbhandler.languageQuery()
+                    .then(results =>{
+                        var resultsAlphabetical = []
+                        
+                        for (var i = 0; i < results.length; i++){
+                            resultsAlphabetical.push(results[i].lang_name);
+                        }
+
+                        resultsAlphabetical.sort();
+                        res.render('register', {langList: resultsAlphabetical, issue: result[0]});
+                    })
+
+                    .catch(err =>{
+                        logger.error('There was an error attempting to get the list of languages:\n');
+                        logger.error(err);
+                        var flashMessage = 'There was an error processing that request. Please try again or contact an site administrator'
+                            + ' should this issue persist.';
+                        req.flash('info', 'requestError');
+                        req.flash('requestError', flashMessage);
+                        res.redirect('/');
+                    });
+            })
+
+            .catch(err =>{
+                logger.error('Therer was an error attempting to register a new user:\n');
+                    logger.error(err);
+                    var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
+                        + ' should this issue persist.';
+                    req.flash('info', 'requestError');
+                    req.flash('requestError', flashMessage);
+                    res.redirect('/');
+            });
+    }
+    else{
+        res.redirect('/');
+    }
 });
 
 app.post('/resetPassword', (req, res) => {

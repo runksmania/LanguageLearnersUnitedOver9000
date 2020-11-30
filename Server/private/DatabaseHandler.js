@@ -96,7 +96,7 @@ module.exports = class DatabaseHandler {
                         res = res.rows
 
                         if (res.length > 0){
-                            resolve(['username']);
+                            resolve(['Username']);
                             return;
                         }
 
@@ -109,7 +109,7 @@ module.exports = class DatabaseHandler {
                                 res = res.rows
 
                                 if (res.length > 0){
-                                    resolve(['email']);
+                                    resolve(['Email']);
                                     return;
                                 }
 
@@ -118,14 +118,13 @@ module.exports = class DatabaseHandler {
 
                                 //Set up parameterized query.
                                 var queryString = 'INSERT INTO users\n'
-                                + '(username, fname, lname, salt, pass, email, lang_pref, access_token)\n'
+                                + '(username, fname, lname, salt, pass, email, lang_pref, access_token, first_login)\n'
                                 + 'VALUES\n'
-                                + '($1,$2,$3,$4,$5,$6,$7,$8);';
+                                + '($1,$2,$3,$4,$5,$6,$7,$8,$9);';
 
                                 this.pool.query(queryString, [username, fname, lname,
-                                salt, hashPass, email, lang_pref, 0], function (err, result) {
+                                salt, hashPass, email, lang_pref, 0, '1'], function (err, result) {
                                     if (!err) {
-                                        logger.info('Created new user for user: ' + username);
                                         resolve(['success']);
                                     }
                                     else{

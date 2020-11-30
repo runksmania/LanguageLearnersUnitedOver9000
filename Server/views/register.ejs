@@ -6,7 +6,10 @@
     <link rel="stylesheet" type="text/css" href="/css/resetPassword.css" />
     <link rel="shortcut icon" href="../graphics/favicon.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script src="/scripts/resetPassword.js"></script>
+    <script src="/scripts/register.js"></script>
+    <script>var issue = <%- JSON.stringify(issue) %></script>
 </head>
 <body>
     <div class="contentWrapper">
@@ -15,7 +18,12 @@
             <div class="registrationForm">
                 <img class="logo" src="../graphics/splash.jpg" height="60%" width="60%" />
                 <h1>Sign up</h1>
-                <form class="newUserForm" action="/main/admin/addNewUser" method="post" autocomplete="off">
+
+                <% if(issue != null) { %>
+                    <p class="registerFailed" onload="animateRegisterFailed">Registration Failed Duplicate <%=issue %></p>
+                <% } %>
+
+                <form class="newUserForm" action="/registerUser" method="post" autocomplete="off">
 
                                     
                     <input type="text" name="username" placeholder="Enter Username" required />
@@ -32,10 +40,12 @@
 
                     <p>Please select a language you wish to learn. <br/>It can be changed later.</p>
                     <label>Learning Preference</label>
-                    <select name="dept" required>
+                    <select name="langPref" required>
                         <option value="" disabled selected="selected">Select a language--</option> 
                         <% for (var i = 0; i < langList.length; i++) { %>
-                            <option value="<%= langList[i].lang_name %>""><%= langList[i].lang_name %></option> 
+                            <% if(langList[i] != 'English') { %>
+                                <option value="<%= langList[i] %>""><%= langList[i] %></option> 
+                            <% } %>
                         <%}%>
                     </select>
                     <p></p>
