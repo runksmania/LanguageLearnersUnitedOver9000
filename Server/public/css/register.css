@@ -3,11 +3,12 @@ body {
     top: 50%;
     left: 50%;
     position: absolute;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -45%);
     box-sizing: border-box;
     padding: 70px;
     background: url(../graphics/Background.jpg) repeat-x #b8b6b7;
     font-family: Arial, sans-serif;
+    text-align: center;
 }
 
 .contentWrapper {
@@ -22,16 +23,21 @@ body {
     display: table;
     position: relative;
     padding: 15px;
-    text-align: center;
 }
 
 .content {
-    border-radius: 15px;
+    width: 500px;
+    border-radius: 30px;
     background: white;
-    padding: 10px;
 }
 
-form input[type="text"] {
+.input {
+    margin-bottom: 5px;
+}
+
+form input[type="text"], form input[type="email"], form input[type="password"] {
+    width: 50%;
+    border: 1px solid #8f8f8f;
     background: transparent;
     outline: none;
     height: 30px;
@@ -44,26 +50,35 @@ form input[type="text"] {
     text-indent: 5px;
 }
 
-form input[type="text"]:focus {
-    box-shadow: 0 0 10px rgba(255, 0, 0, 1);
+.capsOn{
+    margin: 0 3px 0 0;
+    padding: 0;
+    color: red;
+}
+
+form input[type="text"]:focus, form input[type="email"]:focus, form input[type="password"]:focus {
+    box-shadow: 0 0 6px rgba(81, 203, 238, 1);
 }
 
 ::-webkit-input-placeholder {
     font-style: italic;
 }
 
-a {
-    text-decoration: none;
-    font-size: 15px;
-    line-height: 20px;
+.newUserForm input[type="submit"]{
+    background: linear-gradient(to bottom,rgba(28,169,28,1) 0,rgba(5,95,5,1) 100%);
+    color: #fff;
+    padding: 5px 10px;
+    width: 70px;
+    margin-top: 20px;
+    text-indent: 0px;
+}
+
+.newUserForm input[type="submit"]:hover{
+    cursor: default;
+}
+
+#loginLink{
+    font-size: 18px;
+    margin-right: 20px;
     color: rgb(0, 118, 190);
-    font-weight: normal;
-}
-
-#logoutLink{
-    text-align: left;
-}
-
-a:hover {
-    color: red;
 }

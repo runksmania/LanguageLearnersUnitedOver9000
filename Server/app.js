@@ -142,7 +142,7 @@ app.get('/main/flashCardGames/?:lang', (req, res) => {
             .catch((err) => {
                 logger.error('There was an error attempting to get words list for language:\n' + req.params.lang);
                 logger.error(err);
-                var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                     + ' should this issue persist.';
                 req.flash('info', 'requestError');
                 req.flash('requestError', flashMessage);
@@ -173,7 +173,7 @@ app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
                 .catch(err => {
                     logger.error('There was an error attempting to get words list for language:\n' + req.params.lang);
                     logger.error(err);
-                    var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                    var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                         + ' should this issue persist.';
                     req.flash('info', 'requestError');
                     req.flash('requestError', flashMessage);
@@ -202,7 +202,7 @@ app.get('/main/users/search/language/:lang', (req, res) =>{
             .catch(err => {
                 logger.error('There was an error attempting to get user list for language:\n' + req.params.lang);
                 logger.error(err);
-                var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                     + ' should this issue persist.';
                 req.flash('info', 'requestError');
                 req.flash('requestError', flashMessage);
@@ -233,6 +233,29 @@ app.get('/main/users/search/language/:lang/search', (req, res) =>{
     }
 });
 
+app.get('/register', (req, res) => {
+    if (!req.session || !req.session.user) {
+        
+        dbhandler.languageQuery()
+            .then(results =>{
+                res.render('register', {langList: results});
+            })
+
+            .catch(err =>{
+                logger.error('There was an error attempting to get the list of languages:\n');
+                logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact an site administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
+            });
+    }
+    else{
+        res.redirect('/main');
+    }
+});
+
 app.get('*/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
@@ -254,7 +277,7 @@ app.post('/login', [body('username').trim().escape()], (req, res) => {
         if (err) {
             logger.error('There was an error attempting to login:\n' + req.body.username);
             logger.error(err);
-            var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+            var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                 + ' should this issue persist.';
             req.flash('info', 'requestError');
             req.flash('requestError', flashMessage);
@@ -287,7 +310,7 @@ app.post('/resetPassword', (req, res) => {
                         if (err) {
                             logger.error('Therer was an error attempting to reset password:\n' + user.username);
                             logger.error(err);
-                            var flashMessage = 'There was an error processing that request. Please try again or contact an administrator'
+                            var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                                 + ' should this issue persist.';
                             req.flash('info', 'requestError');
                             req.flash('requestError', flashMessage);
@@ -322,7 +345,7 @@ app.use((req, res) => {
     var user = req.session.user ? req.session.user : { 'username': undefined }
     logger.error('There was an an attempt to reach a page for [' + req.path + '] that doesn\'t exist. (404 error) by user (undefined no username): '
         + user.username);
-    var flashMessage = 'ERROR 404 PAGE NOT FOUND\nThere was an error processing that request. Please try again or contact an administrator'
+    var flashMessage = 'ERROR 404 PAGE NOT FOUND\nThere was an error processing that request. Please try again or contact a site administrator'
         + ' should this issue persist.';
     req.flash('info', '404Error');
     req.flash('404Error', flashMessage);

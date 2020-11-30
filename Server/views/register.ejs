@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up Page</title>
+    <link rel="stylesheet" type="text/css" href="/css/register.css" />
+    <link rel="stylesheet" type="text/css" href="/css/resetPassword.css" />
+    <link rel="shortcut icon" href="../graphics/favicon.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/scripts/resetPassword.js"></script>
+</head>
+<body>
+    <div class="contentWrapper">
+        <div class="content">
+
+            <div class="registrationForm">
+                <img class="logo" src="../graphics/splash.jpg" height="60%" width="60%" />
+                <h1>Sign up</h1>
+                <form class="newUserForm" action="/main/admin/addNewUser" method="post" autocomplete="off">
+
+                                    
+                    <input type="text" name="username" placeholder="Enter Username" required />
+                    <p></p>
+                    
+                    <input type="text" name="fname" placeholder="Enter First Name" required />
+                    <p></p>
+                    
+                    <input type="text" name="lname" placeholder="Enter Last Name" required />
+                    <p></p>
+
+                    <input type="email" name="email" placeholder="Enter Email" required />
+                    <p></p>
+
+                    <p>Please select a language you wish to learn. <br/>It can be changed later.</p>
+                    <label>Learning Preference</label>
+                    <select name="dept" required>
+                        <option value="" disabled selected="selected">Select a language--</option> 
+                        <% for (var i = 0; i < langList.length; i++) { %>
+                            <option value="<%= langList[i].lang_name %>""><%= langList[i].lang_name %></option> 
+                        <%}%>
+                    </select>
+                    <p></p>
+
+                    <input class="passwordInput" type="password" id="pass" name="password" placeholder="Enter Password" required />
+                    <p></p>
+                    <input class="passwordInput" type="password" id="passConfirm" name="passConfirm" placeholder="Re-enter Password" required />
+                    <p></p>
+                    <p style="display:none" class="capsOn">Caps Lock is on.</p>
+                    <p style="display:none" class="passMismatch">Passwords do not match.</p>
+                    <input class="submit" type="submit" name="register" value="Sign Up"/>
+                    <p></p>
+                    <a id="loginLink" href="/login">Already have an account?</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="glyphs">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        <div id="Length" class="glyphicon glyphicon-remove">Must be at least 8 charcters</div>
+        <div id="UpperCase" class="glyphicon glyphicon-remove">Must have at least 1 upper case character</div>
+        <div id="LowerCase" class="glyphicon glyphicon-remove">Must have at least 1 lower case character</div>
+        <div id="Numbers" class="glyphicon glyphicon-remove">Must have at least 1 numeric character</div>
+        <div id="Symbols" class="glyphicon glyphicon-remove">Must have at least 1 special character from !@#$%^&*</div>
+        <div id="Match" class="glyphicon glyphicon-remove">Passwords must match</div>
+    </div>
+</body>
+</html>

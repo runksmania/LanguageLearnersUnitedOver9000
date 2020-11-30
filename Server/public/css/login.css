@@ -41,7 +41,7 @@ h2{
     font-size: 18px;
 }
 
-.rhcLogo{
+.logo{
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -106,10 +106,9 @@ h2{
 
 .loginForm input[type="submit"]:hover{
     cursor: default;
-
 }
 
-.loginForm a {
+.loginForm a, #registerLink {
     text-decoration: none;
     font-size: 12px;
     line-height: 20px;
@@ -124,9 +123,10 @@ h2{
     color: #ffc107;
 }
 
-#resetBtn{
-    margin-top: 10px;
-    width: 150px;
+#registerLink{
+    font-size: 18px;
+    margin-right: 20px;
+    color: rgb(0, 118, 190);
 }
 
 .noReuse{
