@@ -77,24 +77,74 @@ module.exports = class DatabaseHandler {
     }
 
     //This function adds a new user into the database.
-    addNewUser(emp_id, username, fname, lname, dept, email, pass, accessToken, done) {
-        var salt = hash.createSalt();
-        var hashPass = hash.hashPassword(salt, pass);
+    //This function defaults access token to regular user.  
+    //To add an admin it must be directly into the database.
+    //Returns an array containing one of the following:
+    //    'success': If adding was successful.
+    //    'username': If the username is taken.
+    //    'email': If email is already registerd.
+    addNewUser(username, fname, lname, email, lang_pref, pass) {
+        
+        return new Promise(function (resolve, reject){
 
-        //Set up parameterized query.
-        var queryString = 'INSERT INTO emp\n'
-            + 'VALUES\n'
-            + '($1,$2,$3,$4,$5,$6,$7,$8,$9);';
+            var queryString = 'SELECT *\n'
+                + 'FROM users\n'
+                + 'WHERE username = $1;';
 
-        var query = this.pool.query(queryString, [emp_id, username, fname, lname,
-            dept, salt, hashPass, email, accessToken], function (err, result) {
-                if (!err) {
-                    logger.info('Created new user for user: ' + username);
-                }
+            this.pool.query(queryString, [username])
+                .then(res => {
+                        res = res.rows
 
-                return done(err, true);
+                        if (res.length > 0){
+                            resolve(['username']);
+                            return;
+                        }
 
-            });
+                        var queryString = 'SELECT *\n'
+                            + 'FROM users\n'
+                            + 'WHERE email = $1;';
+
+                        this.pool.query(queryString, [email])
+                            .then(res => {
+                                res = res.rows
+
+                                if (res.length > 0){
+                                    resolve(['email']);
+                                    return;
+                                }
+
+                                var salt = hash.createSalt();
+                                var hashPass = hash.hashPassword(salt, pass);
+
+                                //Set up parameterized query.
+                                var queryString = 'INSERT INTO users\n'
+                                + '(username, fname, lname, salt, pass, email, lang_pref, access_token)\n'
+                                + 'VALUES\n'
+                                + '($1,$2,$3,$4,$5,$6,$7,$8);';
+
+                                this.pool.query(queryString, [username, fname, lname,
+                                salt, hashPass, email, lang_pref, 0], function (err, result) {
+                                    if (!err) {
+                                        logger.info('Created new user for user: ' + username);
+                                        resolve(['success']);
+                                    }
+                                    else{
+                                        reject(err);
+                                    }
+
+                                });
+                            })
+
+                            .catch(err =>{
+                                reject(err);
+                            });
+                    })
+
+                    .catch(err =>{
+                        reject(err);
+                    });
+
+        }.bind(this))
     }
 
     //Function to grab salt for resetting password.
@@ -366,3 +416,30 @@ module.exports = class DatabaseHandler {
         }.bind(this));
     }
 }
+
+// The following is for debugging.
+const Dbhandler = require('./DatabaseHandler.js');
+const dbhandler = new Dbhandler();
+
+/*dbhandler.addNewUser('mc1', 'hello', 'world', 'helloworld@yahoo.com', 'Italian', 'abc')
+    .then(res =>{
+
+        switch(res[0])
+        {
+            case 'success':
+                logger.info('This was sucessful.');
+                break;
+
+            case 'username':
+                logger.info('Duplicate username.');
+                break;
+
+            case 'email':
+                logger.info('Duplicate email.');
+                break;
+        }
+    })
+    
+    .catch(err =>{
+        logger.error(err);
+    });*/

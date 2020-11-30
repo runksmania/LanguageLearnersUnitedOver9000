@@ -7,11 +7,16 @@
 DELETE FROM users;
 \echo
 
+\echo 'Deleting user_languages table data...\n'
+DELETE FROM user_languages;
+\echo
+
 \echo 'Inserting default users...\n'
 \echo
 INSERT INTO users
+(username, fname, lname, salt, pass, email, lang_pref, access_token, first_login, pass_age)
 VALUES
-(57, 
+( 
 'mcottrell',
 'Michael',
 'Cottrell',
@@ -27,20 +32,21 @@ Now()-- - INTERVAL '3 month'
 INSERT INTO user_languages
 VALUES
 (
-   57,
+   1,
    'English'
 );
 
 INSERT INTO user_languages
 VALUES
 (
-   57,
+   1,
    'Italian'
 );
 
 INSERT INTO users
+(username, fname, lname, salt, pass, email, lang_pref, access_token, first_login, pass_age)
 VALUES
-(200, 
+(
 'rtucker',
 'Riley',
 'Tucker',
@@ -56,6 +62,6 @@ Now()
 INSERT INTO user_languages
 VALUES
 (
-   200,
+   2,
    'English'
 );
