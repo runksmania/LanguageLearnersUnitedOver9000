@@ -12,7 +12,6 @@ DELETE FROM user_languages;
 \echo
 
 \echo 'Inserting default users...\n'
-\echo
 INSERT INTO users
 (username, fname, lname, salt, pass, email, lang_pref, access_token, first_login, pass_age)
 VALUES
@@ -27,20 +26,6 @@ VALUES
 1,
 1,
 Now()-- - INTERVAL '3 month'
-);
-
-INSERT INTO user_languages
-VALUES
-(
-   1,
-   'English'
-);
-
-INSERT INTO user_languages
-VALUES
-(
-   1,
-   'Italian'
 );
 
 INSERT INTO users
@@ -58,6 +43,23 @@ VALUES
 NULL,
 Now()
 );
+\echo
+
+\echo 'Inserting default user_languages...'
+
+INSERT INTO user_languages
+VALUES
+(
+   1,
+   'English'
+);
+
+INSERT INTO user_languages
+VALUES
+(
+   1,
+   'Italian'
+);
 
 INSERT INTO user_languages
 VALUES
@@ -65,3 +67,4 @@ VALUES
    2,
    'English'
 );
+\echo

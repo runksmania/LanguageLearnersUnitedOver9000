@@ -11,6 +11,11 @@
     <script src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script src="/scripts/searchUsers.js"></script>
     <script src="/scripts/logout.js"></script>
+    <% if(typeof(langPref) != 'undefined') {%>
+        <script>
+            var langPref = <%- JSON.stringify(langPref) %>
+        </script>
+    <% } %>
 </head>
 <body>
 

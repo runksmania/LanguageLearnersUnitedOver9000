@@ -11,35 +11,36 @@ body {
     overflow: hidden;
 }
 
-table ul {
-    padding: 0;
-    vertical-align: top;
+a {
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 20px;
+    color: rgb(0, 118, 190);
+    font-weight: normal;
+}
+
+ul {
+    padding: 0px;
+    padding-left: 10px;
+    min-width: 100px;
 }
 
 li {
     list-style-type: none;
-}
-
-table {
-    border: solid black 3px;
-    border-radius: 15px;
-    white-space: nowrap; 
-    border-spacing: 0px;   
+    padding-top: 10px;
 }
 
 td {
     vertical-align: top;
-    border-collapse: collapse;
     text-align: center;
-    border: 1px solid black;
-    border-bottom: none;
+
     padding-top: 10px;
 }
 
-th {
+tr {
     border: 1px solid black;
-    border-top: none;
-    padding: 2px;
+    border-bottom: none;
+    border-collapse: collapse;
 }
 
 .contentWrapper {
@@ -51,17 +52,18 @@ th {
     background-color: white;
     background-image: -webkit-gradient( linear, left bottom, left top, color-stop(-0.0, #C6C6C6), color-stop(0.8, #E1E1E1), color-stop(1.0, #F8F8F8));
     z-index: 1;
-    display: table;
+    display: block;
     position: relative;
     padding: 15px;
-    width: 85vw;
-    height: 85vh;
 }
 
 .content {
     border-radius: 15px;
     background: white;
-    overflow: auto;
+    overflow: hidden;
+    display: block;
+    width: 85vw;
+    height: 85vh;
 }
 
 .webmailLayout {
@@ -69,21 +71,69 @@ th {
     width: 85vw;
 }
 
-.message{
+.messageOverview .from{
+    text-align: left;
+}
+
+.messageOverview .date{
+    text-align: right;
+}
+
+.message {
     overflow: hidden;
     text-overflow: ellipsis;
-    margin: 1rem, 1rem, 0, 1rem;
+    text-align: left;
+    white-space: nowrap;
+    float: left;
+    clear: left;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.messageOverview {
+    border-bottom: solid black 1px;
+    border-spacing: 0px;
+    width: 100%;
+    display: block;
+    height: 80px;
+    cursor: default;
+}
+
+.list:first-child{
+    margin-top: 26px;
+}
+
+.messageOverview span{
+    display: inline;
     float: left;
 }
 
-.messageOverview{
-    display: block;
+.from{
+    margin-right: 75px;
 }
 
-.messageOverview td{
-    border: none;
+.inlineLayout{
+    display: inline;
+    float: left;
+    height: 100%;
 }
 
-#sidebar{
-    width: 200px;
+.inlineLayout{
+    border-right: 1px black solid;
+} 
+
+.sidebar{
+    width: 8%;
+    cursor: default;
+}
+
+.messageList{
+    width: 20%;
+}
+
+.messageView {
+    width: 71.7%;
+    padding-top: 26px;
+    text-align: center;
+    word-wrap: normal;
 }

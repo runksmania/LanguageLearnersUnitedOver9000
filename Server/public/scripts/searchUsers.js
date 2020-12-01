@@ -17,12 +17,12 @@ $(document).ready(function ()
     //Sends ajax request to server with user's input and gets the results.
     function searchRequests(searchInput)
     {
-        var urlString = window.location.pathname + '/search';
+        var urlString = window.location.pathname + 'ajax';
 
         $.ajax({
             method: "get",
             url: urlString,
-            data: {narrow: searchInput}
+            data: {narrow: searchInput, langPref: langPref}
         })
             .done(function (result)
             {

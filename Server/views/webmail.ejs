@@ -36,25 +36,22 @@
 
     <div class="contentWrapper">
         <div class="content">
-            <table class="webmailLayout">
-                <tr>
-                    <td id="sidebar">
-                        <ul>
-                            <li>Inbox</li>
-                            <li>Sent</li>
-                        </ul>
-                    </td>
-                    <td>
-                        <table id="messageList">
-                        </table>
-                    </td>
-                    <td>
-                        <% if(messageList[0] == [] && messageList[1] == []) {%>
-                            <span id="messageView">Looks like there are no messages.</span>
-                        <%} %>
-                    </td>
-                </tr>
-            </table>
+            <div class="webmailLayout">
+                <div class="inlineLayout sidebar">
+                    <ul>
+                        <li id="inbox">Inbox</li>
+                        <li id="sent">Sent</li>
+                    </ul>
+                </div>
+                <div class="inlineLayout messageList">
+                    <div id="messageList">
+                        <div class="list"></div>
+                    </div>
+                </div>
+                <div class="inlineLayout messageView">
+                    <span id="message">Nothing to view here yet.</span>
+                </div>
+            </div>
         </div>
     </div>
 

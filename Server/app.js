@@ -190,13 +190,13 @@ app.get('/main/facts/type/?:factType/', (req, res) => {
     }
 });
 
-app.get('/main/users/search', (req, res) =>{
+app.get('/main/users/search/', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
         dbhandler.getUserList(req.session.user.langPref, {})
             .then(results => {
-                res.render('searchUsers', {users: results});
+                res.render('searchUsers', {users: results, langPref : req.session.user.langPref});
             })
 
             .catch(err => {
@@ -214,11 +214,11 @@ app.get('/main/users/search', (req, res) =>{
     }
 });
 
-app.get('/main/users/search/language/:lang/search', (req, res) =>{
+app.get('/main/users/search/ajax', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
-        dbhandler.getUserList(req.params.langPref, req.query)
+        dbhandler.getUserList(req.query.langPref, req.query)
             .then(results => {
                 res.send(results);
             })
@@ -265,11 +265,9 @@ app.get('/register', (req, res) => {
 
 app.get('/main/webmail', (req, res) => {
     if (req.session && req.session.user) {
-        logger.debug(req.session.user);
 
         dbhandler.getMessages(req.session.user.id)
             .then(results => {
-                logger.debug(results);
                 res.render('webmail', {messageList: results});
             })
 
