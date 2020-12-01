@@ -1,5 +1,5 @@
 /* LLUO Project Database Default User Population File
-   Last modified: 10/8/2020
+   Last modified: 11/29/2020
    Author: Michael Cottrell & Riley Tucker
 */
 

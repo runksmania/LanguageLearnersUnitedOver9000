@@ -1,5 +1,5 @@
 /* LLUO Project Database Default Table Creation File
-   Last modified: 10/13/2020
+   Last modified: 11/30/2020
    Author: Michael Cottrell & Riley Tucker
 */
 
@@ -92,6 +92,6 @@ CREATE TABLE messages
     user_to_num   INTEGER REFERENCES users,
     user_from_num INTEGER REFERENCES users,
     user_message  VARCHAR,
-    sent_date     DATE DEFAULT NOW()
+    sent_date     TIMESTAMP(0) WITH TIME ZONE DEFAULT (current_timestamp)
 );
 \echo

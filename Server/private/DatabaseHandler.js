@@ -414,29 +414,54 @@ module.exports = class DatabaseHandler {
                 });
         }.bind(this));
     }
+
+    //This function gets all sent and received messages from the database.
+    //Returns a list with the following:
+    //    1. All received messages.
+    //    2. All sent messages.
+    getMessages(user_num){
+
+        return new Promise(function (resolve, reject){
+
+            var queryString = 'SELECT t.username AS to_user, f.username AS from_user, m.user_message, m.sent_date\n'
+                + 'FROM users t, users f, messages m\n'
+                + 'WHERE t.user_num = m.user_to_num AND f.user_num = m.user_from_num AND t.user_num = $1;'
+
+            this.pool.query(queryString, [user_num])
+                .then(res =>{
+                    var messages = [res.rows]
+
+                    queryString = 'SELECT t.username AS to_user, f.username AS from_user, m.user_message, m.sent_date\n'
+                    + 'FROM users t, users f, messages m\n'
+                    + 'WHERE t.user_num = m.user_to_num AND f.user_num = m.user_from_num AND f.user_num = $1;'
+
+                    this.pool.query(queryString, [user_num])
+                        .then(res =>{
+                            messages.push(res.rows)
+                            return resolve(messages);
+                        })
+
+                        .catch(err =>{
+                            return reject(err);
+                        });
+                })
+
+                .catch(err =>{
+                    return reject(err);
+                });
+
+            
+        }.bind(this));
+    }
 }
 
 // The following is for debugging.
-const Dbhandler = require('./DatabaseHandler.js');
+/*const Dbhandler = require('./DatabaseHandler.js');
 const dbhandler = new Dbhandler();
 
-/*dbhandler.addNewUser('mc1', 'hello', 'world', 'helloworld@yahoo.com', 'Italian', 'abc')
+dbhandler.getMessages(1)
     .then(res =>{
-
-        switch(res[0])
-        {
-            case 'success':
-                logger.info('This was sucessful.');
-                break;
-
-            case 'username':
-                logger.info('Duplicate username.');
-                break;
-
-            case 'email':
-                logger.info('Duplicate email.');
-                break;
-        }
+        console.log(res);
     })
     
     .catch(err =>{

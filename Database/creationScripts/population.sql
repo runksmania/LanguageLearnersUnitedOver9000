@@ -12,3 +12,7 @@
 \echo 'Running lang_population.sql...'
 \i lang_population.sql
 \echo
+
+\echo 'Running message_population.sql...'
+\i message_population.sql
+\echo

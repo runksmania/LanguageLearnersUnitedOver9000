@@ -129,7 +129,7 @@ app.get('/main/flashCardGames/?:lang', (req, res) => {
     if (req.session && req.session.user) {
 
         //Get words list for the language and render the view.
-        dbhandler.getWordList(req.params.lang)
+        dbhandler.getWordList(req.session.user.langPref)
             .then((result) => {
                 var words = [];
 
@@ -137,10 +137,10 @@ app.get('/main/flashCardGames/?:lang', (req, res) => {
                     words.push([result[i].word, result[i].eng_word]);
                 }
 
-                res.render('flashCardGame', { words_list: words, language: req.params.lang });
+                res.render('flashCardGame', { words_list: words, language: req.session.user.langPref });
             })
             .catch((err) => {
-                logger.error('There was an error attempting to get words list for language:\n' + req.params.lang);
+                logger.error('There was an error attempting to get words list for language:\n' + req.session.user.langPref);
                 logger.error(err);
                 var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                     + ' should this issue persist.';
@@ -150,28 +150,28 @@ app.get('/main/flashCardGames/?:lang', (req, res) => {
             });
 
         //After rendering the view check if words_* table needs updated.
-        updateWordList(dbhandler, req.params.lang);
+        updateWordList(dbhandler, req.session.user.langPref);
     }
     else {
         res.redirect('/');
     }
 });
 
-app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
+app.get('/main/facts/type/?:factType/', (req, res) => {
     if (req.session && req.session.user) {
 
         //Get page name from database for language and fact type.
-        dbhandler.getFactPageName(req.params.lang, req.params.factType)
+        dbhandler.getFactPageName(req.session.user.langPref, req.params.factType)
             .then(pageName => {
 
                 //Get facts list for the language and and fact type then render to view.
                 getPageContent(pageName)
                 .then(results => {
-                    res.render('languageFacts', {facts: results, language: req.params.lang, factType: req.params.factType});
+                    res.render('languageFacts', {facts: results, language: req.session.user.langPref, factType: req.params.factType});
                 })
 
                 .catch(err => {
-                    logger.error('There was an error attempting to get words list for language:\n' + req.params.lang);
+                    logger.error('There was an error attempting to get words list for language:\n' + req.session.user.langPref);
                     logger.error(err);
                     var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                         + ' should this issue persist.';
@@ -190,17 +190,17 @@ app.get('/main/facts/type/?:factType/language/?:lang', (req, res) => {
     }
 });
 
-app.get('/main/users/search/language/:lang', (req, res) =>{
+app.get('/main/users/search', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
-        dbhandler.getUserList(req.params.lang, {})
+        dbhandler.getUserList(req.session.user.langPref, {})
             .then(results => {
                 res.render('searchUsers', {users: results});
             })
 
             .catch(err => {
-                logger.error('There was an error attempting to get user list for language:\n' + req.params.lang);
+                logger.error('There was an error attempting to get user list for language:\n' + req.session.user.langPref);
                 logger.error(err);
                 var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                     + ' should this issue persist.';
@@ -218,13 +218,13 @@ app.get('/main/users/search/language/:lang/search', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
-        dbhandler.getUserList(req.params.lang, req.query)
+        dbhandler.getUserList(req.params.langPref, req.query)
             .then(results => {
                 res.send(results);
             })
 
             .catch(err => {
-                logger.error('There was an error attempting to get user list for language:\n' + req.params.lang);
+                logger.error('There was an error attempting to get user list for language:\n' + req.params.langPref);
                 logger.error(err);
             });        
     }
@@ -260,6 +260,24 @@ app.get('/register', (req, res) => {
     }
     else{
         res.redirect('/main');
+    }
+});
+
+app.get('/main/webmail', (req, res) => {
+    if (req.session && req.session.user) {
+        res.render('webmail');
+    }
+    else{
+        res.redirect('/');
+    }
+});
+
+app.get('/main/settings', (req, res) =>{
+    if (req.session && req.session.user) {
+        res.render('settings');
+    }
+    else{
+        res.redirect('/');
     }
 });
 
