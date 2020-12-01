@@ -26,14 +26,20 @@ function showMessage(){
     var index = $('.messageOverview').index(this);
     var message = messageList[0][index].user_message;
     var clickedMessage = $(this).find('.message').text();
+    var messageInfo = messageList[0][index];
+    var datetime = new Date(messageInfo.sent_date);
 
     //If they are equal current messages listed are from the inbox else it's from sent.
-    if (clickedMessage == message){
-        $('#message').empty().text(messageList[0][index].user_message);
+    if (clickedMessage != message){
+        messageInfo = messageList[1][index];
     }
-    else{
-        $('#message').empty().text(messageList[1][index].user_message);
-    }
+
+    $('.messageView .to').empty().html('<strong>To:</strong> ' + messageInfo.to_user);
+    $('.messageView .from').empty().html('<strong>From:</strong> ' + messageInfo.from_user);
+    $('.messageView .date').empty().html('<strong>Date Sent:</strong> ' + datetime.toLocaleString('en-US', {timezone: 'PST'}));
+    $('#message').empty().html('<strong>Message:</strong> <br/><br/>' + messageInfo.user_message);
+    $('.reply').empty().append('<textarea type="text" id="replyBox"/>');
+    $('#sendBtn').show();
 }
 
 $(document).ready(function ()
