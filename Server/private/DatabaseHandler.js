@@ -50,7 +50,7 @@ module.exports = class DatabaseHandler {
             else {
                 //Check login credentials, against database.
                 result = result.rows[0]
-                user.id = result.iduser;
+                user.id = result.user_num;
                 user.username = result.username;
                 user.name = result.fname + ' ' + result.lname;
                 user.email = result.email;

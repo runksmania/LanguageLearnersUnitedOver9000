@@ -265,7 +265,23 @@ app.get('/register', (req, res) => {
 
 app.get('/main/webmail', (req, res) => {
     if (req.session && req.session.user) {
-        res.render('webmail');
+        logger.debug(req.session.user);
+
+        dbhandler.getMessages(req.session.user.id)
+            .then(results => {
+                logger.debug(results);
+                res.render('webmail', {messageList: results});
+            })
+
+            .catch(err =>{
+                logger.error('There was an error attempting to get the list of messages for user: ' + req.session.user.username + '\n');
+                logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact an site administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
+            });
     }
     else{
         res.redirect('/');
