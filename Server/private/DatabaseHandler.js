@@ -210,11 +210,10 @@ module.exports = class DatabaseHandler {
 
             this.pool.query(queryString, function (error, result) {
                 if (error) {
-                    reject(error);
-                    return;
+                    return reject(error);
                 }
                 else {
-                    resolve(result.rows);
+                    return resolve(result.rows);
                 }
             });
         }.bind(this))
@@ -231,11 +230,10 @@ module.exports = class DatabaseHandler {
             this.pool.query(queryString, [lang_name], function (err, res) {
 
                 if (err) {
-                    reject(err);
-                    return;
+                    return reject(err);
                 }
                 else {
-                    resolve(res);
+                    return resolve(res);
                 }
             });
         }.bind(this))
@@ -261,11 +259,10 @@ module.exports = class DatabaseHandler {
             this.pool.query(queryString, [lang_name], function(err, res){
 
                 if (err){
-                    logger.error(err);
-                    reject(err);
+                    return reject(err);
                 }
                 else{
-                    resolve(res.rows[0][factType]);
+                    return resolve(res.rows[0][factType]);
 
                 }
             });            
@@ -282,10 +279,10 @@ module.exports = class DatabaseHandler {
 
                 this.pool.query(queryString, data, function (err, res) {
                     if (err) {
-                        reject(err);
+                        return reject(err);
                     }
                     else {
-                        resolve(res);
+                        return resolve(res);
                     }
                 });
             }
@@ -296,11 +293,10 @@ module.exports = class DatabaseHandler {
 
                 this.pool.query(queryString, data, function (err, res) {
                     if (err) {
-                        reject(err);
-                        return;
+                        return reject(err);
                     }
                     else {
-                        resolve(res);
+                        return resolve(res);
                     }
                 });
             }
@@ -320,11 +316,10 @@ module.exports = class DatabaseHandler {
 
             this.pool.query(queryString, [lang_name], function (err, res) {
                 if (err) {
-                    reject(err);
-                    return;
+                    return reject(err);
                 }
                 else {
-                    resolve(res);
+                    return resolve(res);
                 }
             });
         }.bind(this));
@@ -339,11 +334,10 @@ module.exports = class DatabaseHandler {
 
             this.pool.query(queryString, function (err, res) {
                 if (err) {
-                    reject(err);
-                    return;
+                    return reject(err);
                 }
                 else {
-                    resolve(res.rows);
+                    return resolve(res.rows);
                 }
             });
         }.bind(this));
@@ -451,6 +445,33 @@ module.exports = class DatabaseHandler {
                 });
 
             
+        }.bind(this));
+    }
+
+    //Function to insert message into database.
+    //Returns True if successful.
+    insertMessage(to, from, message){
+
+        logger.debug(to);
+        logger.debug(from);
+        logger.debug(message);
+        
+        return new Promise(function(resolve, reject){
+
+            var queryString = 'INSERT INTO messages\n'
+                + 'VALUES (\n'
+                + '(SELECT user_num from users where username=$1),\n'
+                + '(SELECT user_num from users where username=$2),$3)';
+
+            this.pool.query(queryString, [to, from, message])
+                .then(res =>{
+                    return resolve(true);
+                })
+
+                .catch(err =>{
+                    return reject(err);
+                });
+
         }.bind(this));
     }
 }

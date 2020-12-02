@@ -268,7 +268,7 @@ app.get('/main/webmail', (req, res) => {
 
         dbhandler.getMessages(req.session.user.id)
             .then(results => {
-                res.render('webmail', {messageList: results});
+                res.render('webmail', {messageList: results, userNum: req.session.user.id});
             })
 
             .catch(err =>{
@@ -279,6 +279,25 @@ app.get('/main/webmail', (req, res) => {
                 req.flash('info', 'requestError');
                 req.flash('requestError', flashMessage);
                 res.redirect('/');
+            });
+    }
+    else{
+        res.redirect('/');
+    }
+});
+
+app.get('/main/webmail/ajax', (req, res) => {
+    if (req.session && req.session.user) {
+        logger.debug(req.query);
+
+        dbhandler.getMessages(req.query.id)
+            .then(results => {
+                res.send(results);
+            })
+
+            .catch(err =>{
+                logger.error('There was an error attempting to get the list of messages for ajax request');
+                logger.error(err);
             });
     }
     else{
@@ -387,13 +406,33 @@ app.post('/registerUser', (req, res) => {
             })
 
             .catch(err =>{
-                logger.error('Therer was an error attempting to register a new user:\n');
+                logger.error('There was an error attempting to register a new user:\n');
                     logger.error(err);
                     var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                         + ' should this issue persist.';
                     req.flash('info', 'requestError');
                     req.flash('requestError', flashMessage);
                     res.redirect('/');
+            });
+    }
+    else{
+        res.redirect('/');
+    }
+});
+
+app.post('/main/webmail/send', (req, res) => {
+
+    logger.debug(req.body);
+    
+    if (req.session && req.session.user) {
+        dbhandler.insertMessage(req.body.toUser, req.body.fromUser, req.body.message)
+            .then(result => {
+                res.send(result);
+            })
+
+            .catch(err => {
+                logger.error('There was an error attempting to insert a new message:\n');
+                logger.error(err);
             });
     }
     else{
@@ -411,7 +450,7 @@ app.post('/resetPassword', (req, res) => {
 
                     dbhandler.resetPassword(user.username, req.body.pass, function (err, bool) {
                         if (err) {
-                            logger.error('Therer was an error attempting to reset password:\n' + user.username);
+                            logger.error('There was an error attempting to reset password:\n' + user.username);
                             logger.error(err);
                             var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
                                 + ' should this issue persist.';

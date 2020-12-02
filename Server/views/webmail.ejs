@@ -15,6 +15,13 @@
             var messageList = <%- JSON.stringify(messageList) %>
         </script>
     <% } %>
+
+    <% if(typeof(userNum) != 'undefined') {%>
+        <script>
+            var userNum = <%- JSON.stringify(userNum) %>
+        </script>
+    <% } %>
+
 </head>
 
 <body>
