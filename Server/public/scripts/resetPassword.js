@@ -82,6 +82,20 @@ $(document).ready(function () {
 
     });
 
+    $('.registrationForm').submit(function (e) {
+        var user_pass = $("#pass").val();
+        var user_pass2 = $("#passConfirm").val();
+        var isValid = validate(user_pass, user_pass2);
+
+        if (isValid) {
+            return true;
+        } else {
+            e.preventDefault(e);
+            return false;
+        }
+
+    });
+
     //Event listeners to check if caps lock is on.
     $('#pass').keypress(function (e) {
         var s = String.fromCharCode(e.which);
