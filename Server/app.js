@@ -329,7 +329,29 @@ app.get('/main/webmail/ajax', (req, res) => {
 
 app.get('/main/settings', (req, res) =>{
     if (req.session && req.session.user) {
-        res.render('settings');
+        var user = req.session.user
+
+        dbhandler.languageQuery()
+            .then(results =>{
+                var resultsAlphabetical = []
+                
+                for (var i = 0; i < results.length; i++){
+                    resultsAlphabetical.push(results[i].lang_name);
+                }
+
+                resultsAlphabetical.sort();
+                res.render('settings', {issue: null, username: user.username, langPref: user.langPref, langList: resultsAlphabetical, fname: user.fname, lname: user.lname, email: user.email});
+            })
+
+            .catch(err =>{
+                logger.error('There was an error attempting to get the list of languages:\n');
+                logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact an site administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
+            });
     }
     else{
         res.redirect('/');
@@ -454,6 +476,72 @@ app.post('/main/webmail/send', (req, res) => {
                 logger.error('There was an error attempting to insert a new message:\n');
                 logger.error(err);
             });
+    }
+    else{
+        res.redirect('/');
+    }
+});
+
+app.post('/changeSettings', (req, res) => {
+    if (req.session  && req.session.user){
+        var user = req.session.user;
+        var params = req.body;
+        var pass = params.password == '' ? null : params.password;
+        logger.debug(params.password);
+        logger.debug(pass);
+
+        dbhandler.updateUser(user.id, user.username, params.fname, params.lname, params.email, params.langPref, pass)
+            .then(result => {
+
+                if (result == 'success') {
+                    req.session.user.fname = params.fname;
+                    req.session.user.lname = params.lname;
+                    req.session.user.email = params.email;
+                    req.session.user.langPref = params.langPref;
+                    user = req.session.user;
+                    logger.info('Changed settings for user: ' + user.username);
+                    var flashMessage = 'Your settings have now been changed.';
+                    req.flash('info', 'Settings change');
+                    req.flash('Settings change', flashMessage);
+                    res.redirect('/');
+                    return;
+                }
+                else{
+                    dbhandler.languageQuery()
+                        .then(results =>{
+
+                            var resultsAlphabetical = []
+                            
+                            for (var i = 0; i < results.length; i++){
+                                resultsAlphabetical.push(results[i].lang_name);
+                            }
+
+                            resultsAlphabetical.sort();
+                            res.render('settings', {issue: result, username: user.username, langPref: user.langPref, langList: resultsAlphabetical, fname: user.fname, lname: user.lname, email: user.email});
+                        })
+
+                        .catch(err =>{
+                            logger.error('There was an error attempting to get the list of languages:\n');
+                            logger.error(err);
+                            var flashMessage = 'There was an error processing that request. Please try again or contact an site administrator'
+                                + ' should this issue persist.';
+                            req.flash('info', 'requestError');
+                            req.flash('requestError', flashMessage);
+                            res.redirect('/');
+                        });
+                }
+            })
+
+            .catch(err => {
+                logger.error('There was an error attempting to change user settings for:\n' + user.username);
+                logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact a site administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
+            });
+
     }
     else{
         res.redirect('/');

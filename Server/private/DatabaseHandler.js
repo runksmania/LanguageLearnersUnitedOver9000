@@ -52,6 +52,8 @@ module.exports = class DatabaseHandler {
                 result = result.rows[0]
                 user.id = result.user_num;
                 user.username = result.username;
+                user.fname = result.fname;
+                user.lname = result.lname;
                 user.name = result.fname + ' ' + result.lname;
                 user.email = result.email;
                 user.accessToken = result.access_token;
@@ -144,6 +146,70 @@ module.exports = class DatabaseHandler {
                     });
 
         }.bind(this))
+    }
+
+    //Function to update user data.
+    //Function resolves 'success' if successful and resolves 'Password' if duplicate password found.
+    updateUser(userNum, username, fname, lname, email, langPref, pass){
+
+        return new Promise(function (resolve, reject){
+            
+            if (pass == null){
+
+                var queryString = 'UPDATE users\n'
+                    + 'SET fname = $2, lname = $3, email = $4, lang_pref = $5\n'
+                    + 'WHERE user_num = $1;';
+    
+                this.pool.query(queryString, [userNum, fname, lname, email, langPref])
+                    .then(res => {
+                        return resolve('success');
+                    })
+    
+                    .catch(err =>{
+                        return reject(err);
+                    });
+            }
+            else{
+    
+                this.prevPassQuery(username, pass, function(err, res){
+
+                    if(err){
+                        return reject(err);
+                    }
+                        
+                    if(res.length != 0){
+                        return resolve('Password');
+                    }
+
+                    this.saltQuery(username, function (err, res){
+
+                        if(err){
+                            return reject(err);
+                        }
+
+                        var hashPass = hash.hashPassword(res[0].salt, pass);
+
+                        var queryString = 'UPDATE users\n'
+                            + 'SET fname = $2, lname = $3, email = $4, lang_pref = $5, pass = $6\n'
+                            + 'WHERE user_num = $1;';
+
+                        this.pool.query(queryString, [userNum, fname, lname, email, langPref, hashPass])
+                            .then(res => {
+                                return resolve('success');
+                            })
+
+                            .catch(err => {
+                                return reject(err);
+                            });
+                    }.bind(this));
+
+
+                }.bind(this));
+            }
+
+        }.bind(this));
+
+        
     }
 
     //Function to grab salt for resetting password.

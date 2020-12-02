@@ -2,14 +2,18 @@
 <html>
 
 <head>
-    <title>Main Page</title>
-    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <title>Settings</title>
     <link rel="stylesheet" type="text/css" href="/css/content.css" />
     <link rel="stylesheet" type="text/css" href="/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="/css/settings.css" />
+    <link rel="stylesheet" type="text/css" href="/css/resetPassword.css" />
     <link rel="shortcut icon" href="../graphics/favicon.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="/scripts/main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script src="/scripts/logout.js"></script>
+    <script src="/scripts/resetPassword.js"></script>
+    <script src="/scripts/settings.js"></script>
+    <script>var issue = <%- JSON.stringify(issue) %></script>
 </head>
 
 <body>
@@ -28,11 +32,59 @@
 
     <div class="contentWrapper">
         <div class="content">
-            
+            <div class="settings">
+                <img class="logo" src="../graphics/splash.jpg" height="60%" width="60%" />
+                <h1>Settings for: <%= username %></h1>
+
+                <% if(issue != null) { %>
+                    <p class="changesFailed" onload="animateRegisterFailed">Cannot use previous password</p>
+                <% } %>
+
+                <form class="settingsForm" action="/changeSettings" method="post" autocomplete="off">
+                    
+                    <input type="text" name="fname" value="<%= fname %>" required />
+                    <p></p>
+                    
+                    <input type="text" name="lname" value="<%= lname %>" required />
+                    <p></p>
+
+                    <input type="email" name="email" value="<%= email %>" required />
+                    <p></p>
+
+                    <label>Learning Preference</label>
+                    <select name="langPref" required>
+                        <option value="<%= langPref %>" selected="selected"><%= langPref %></option> 
+                        <% for (var i = 0; i < langList.length; i++) { %>
+                            <% if(langList[i] != 'English' && langList[i] != langPref) { %>
+                                <option value="<%= langList[i] %>"><%= langList[i] %></option> 
+                            <% } %>
+                        <%}%>
+                    </select>
+                    <p></p>
+
+                    <input class="passwordInput" type="password" id="pass" name="password" placeholder="Enter Password" />
+                    <p></p>
+                    <input class="passwordInput" type="password" id="passConfirm" name="passConfirm" placeholder="Re-enter Password" />
+                    <p></p>
+                    <p style="display:none" class="capsOn">Caps Lock is on.</p>
+                    <p style="display:none" class="passMismatch">Passwords do not match.</p>
+                    <input class="submit" type="submit" name="saveSettings" value="Save"/>
+                    <p></p>
+                </form>
+            </div>
         </div>
     </div>
-
     <a id="logoutLink" href="logout">Logout</a>
+    </div>
+        <div class="glyphs">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        <div id="Length" class="glyphicon glyphicon-remove">Must be at least 8 charcters</div>
+        <div id="UpperCase" class="glyphicon glyphicon-remove">Must have at least 1 upper case character</div>
+        <div id="LowerCase" class="glyphicon glyphicon-remove">Must have at least 1 lower case character</div>
+        <div id="Numbers" class="glyphicon glyphicon-remove">Must have at least 1 numeric character</div>
+        <div id="Symbols" class="glyphicon glyphicon-remove">Must have at least 1 special character from !@#$%^&*</div>
+        <div id="Match" class="glyphicon glyphicon-remove">Passwords must match</div>
+    </div>
 
 </body>
 

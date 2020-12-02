@@ -96,6 +96,27 @@ $(document).ready(function () {
 
     });
 
+    $('.settingsForm').submit(function (e) {
+        var isValid = false;
+        var user_pass = $("#pass").val();
+        var user_pass2 = $("#passConfirm").val();
+
+        if (user_pass != ''  || user_pass2 != ''){
+            var isValid = validate(user_pass, user_pass2);
+        }
+        else{
+            isValid = true;
+        }
+
+        if (isValid) {
+            return true;
+        } else {
+            e.preventDefault(e);
+            return false;
+        }
+
+    });
+
     //Event listeners to check if caps lock is on.
     $('#pass').keypress(function (e) {
         var s = String.fromCharCode(e.which);
