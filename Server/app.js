@@ -194,7 +194,7 @@ app.get('/main/users/search/', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
-        dbhandler.getUserList(req.session.user.langPref, {})
+        dbhandler.getUserList(req.session.user.langPref, req.session.user.id, {})
             .then(results => {
                 res.render('searchUsers', {users: results, langPref : req.session.user.langPref});
             })
@@ -218,7 +218,7 @@ app.get('/main/users/search/ajax', (req, res) =>{
     if (req.session && req.session.user) {
 
         //Get list of users that speak specified language.
-        dbhandler.getUserList(req.query.langPref, req.query)
+        dbhandler.getUserList(req.query.langPref, req.session.user.id, req.query)
             .then(results => {
                 res.send(results);
             })
@@ -487,8 +487,6 @@ app.post('/changeSettings', (req, res) => {
         var user = req.session.user;
         var params = req.body;
         var pass = params.password == '' ? null : params.password;
-        logger.debug(params.password);
-        logger.debug(pass);
 
         dbhandler.updateUser(user.id, user.username, params.fname, params.lname, params.email, params.langPref, pass)
             .then(result => {

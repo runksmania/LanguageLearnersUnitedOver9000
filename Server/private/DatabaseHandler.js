@@ -412,22 +412,24 @@ module.exports = class DatabaseHandler {
     //This function gets a list of users who are fluent in the language specified.
     //Options:
     //  narrow: Uses this variable to narrow by username or fname.
-    getUserList(lang_name, opts){
+    getUserList(lang_name, userNum, opts){
         return new Promise(function (resolve, reject) {
             var queryString = 'SELECT users.user_num, username, fname, lang_pref\n'
                 + 'FROM users, user_languages\n'
                 + 'WHERE users.user_num = user_languages.user_num\n'
-                + 'AND lang_name = $1';
+                + 'AND lang_name = $1\n'
+                + 'AND users.user_num != $2;';
 
-            var parameters = [lang_name]
+            var parameters = [lang_name, userNum]
 
             if (opts && opts['narrow']){
                 var queryString = 'SELECT DISTINCT users.user_num, username, fname, lang_pref\n'
                 + 'FROM users, user_languages\n'
                 + 'WHERE users.user_num = user_languages.user_num\n'
                 + 'AND username = $1\n'
-                + 'OR fname ILIKE $2';
-                parameters = [opts['narrow'], '%' + opts['narrow'] + '%'];
+                + 'OR fname ILIKE $2\n'
+                + 'AND users.user_num != $3;';
+                parameters = [opts['narrow'], '%' + opts['narrow'] + '%', userNum];
             }
 
             this.pool.query(queryString, parameters)
@@ -461,7 +463,7 @@ module.exports = class DatabaseHandler {
                             })
                             
                             .catch(err => {
-                                return Promise.reject(err);
+                                return reject(err);
                             });
                     }
                     else{
@@ -470,7 +472,7 @@ module.exports = class DatabaseHandler {
                 })
 
                 .catch(err =>{
-                    return Promise.reject(err);
+                    return reject(err);
                 });
         }.bind(this));
     }

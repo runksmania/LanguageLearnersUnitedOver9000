@@ -54,15 +54,18 @@ function showMessage(){
 
 function composeView(event){
     
-    if (messageList[1].length != 0){
+    if (contactList.length <= 2){
 
-        if (contacts[messageList[1][0].to_user] != 1){
+        if(messageList[1].length != 0) {
 
-            for (var i of messageList[1]){
+            if (contacts[messageList[1][0].to_user] != 1){
 
-                if(contacts[i.to_user] != 1){
-                    contacts[i.to_user] = 1;
-                    contactList.push(i.to_user);
+                for (var i of messageList[1]){
+
+                    if(contacts[i.to_user] != 1){
+                        contacts[i.to_user] = 1;
+                        contactList.push(i.to_user);
+                    }
                 }
             }
         }
@@ -77,7 +80,7 @@ function composeView(event){
         $('.messageView .from').empty().html(`<p style="display: none"id="from">${username}</p><p><strong>From:</strong> ${username}</p>`);
         $('.messageView .date').empty();
         $('#message').css('display', 'none');
-        $('.reply').empty().height('80%').append('<textarea type="text" id="replyBox"/>');
+        $('.reply').show().empty().height('80%').append('<textarea type="text" id="replyBox"/>');
         $('#sendBtn').show();
         $('#contactSelect').on('change', function(e){
             $('#to').text($(this).val());
@@ -147,7 +150,12 @@ function getMessages(){
 
 $(document).ready(function ()
 {
-    $('.inlineLayout').last().css('border', 'none');   
+    $('.inlineLayout').last().css('border', 'none');
+    
+    if(contacts[username] != 1){
+        contacts[username] = 1;
+        contactList.push(username);
+    }
 
     if(typeof(messageList) != 'undefined') {
         $('#inbox').on('click', {type: 'inbox'}, changeMessageList);

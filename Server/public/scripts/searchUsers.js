@@ -17,7 +17,7 @@ $(document).ready(function ()
     //Sends ajax request to server with user's input and gets the results.
     function searchRequests(searchInput)
     {
-        var urlString = window.location.pathname + 'ajax';
+        var urlString = window.location.origin + '/main/users/search/ajax';
 
         $.ajax({
             method: "get",
@@ -65,8 +65,7 @@ $(document).ready(function ()
                         tableRowString += '<td>' + searchResults[i][property] + '</td>\n';
                     }
                     else if (property == 'username'){
-                        tableRowString += '<td><a href="' + window.location.origin + '/main/users/num/' + searchResults[i]['user_num']
-                        + '/username/' + name + '">' + name + '</a></td>';
+                        tableRowString += '<td><a href="' + window.location.origin + '/main/webmail/username/' + name + '">' + name + '</a></td>';
                     }
                     else 
                     {
