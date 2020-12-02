@@ -48,33 +48,31 @@
                 <div class="usersView">
                     <div class="resultsTable">
                         <div class="content">
-                            <form>
-                                <table cellpadding="0" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Username</th>
-                                            <th>First Name</th>
-                                            <th>Language Learning</th>
-                                            <th>Languages Known</th>
-                                        </tr>
-                                        <tbody>
-                                            <% for (var i = 0; i < users.length; i++) { %>
-                                                <tr>
-                                                    <% for (var property in users[i]) { %>
-                                                        <% if (property != 'user_num' && property != 'username') { %>
-                                                            <td><%= users[i][property] %></td>
-                                                        <% } else if (property == 'username') { %>
-                                                            <td><a href="/main/users/num/<%= users[i]['user_num'] %>/username/<%=users[i][property] %>"><%= users[i][property] %></a></td>
-                                                        <% } else { %>
-                                                            <td name="<%= property %>" style="display: none;"><%= users[i][property] %></td>
-                                                        <% } %>
+                            <table cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Language Learning</th>
+                                        <th>Languages Known</th>
+                                    </tr>
+                                    <tbody>
+                                        <% for (var i = 0; i < users.length; i++) { %>
+                                            <tr>
+                                                <% for (var property in users[i]) { %>
+                                                    <% if (property != 'user_num' && property != 'username') { %>
+                                                        <td><%= users[i][property] %></td>
+                                                    <% } else if (property == 'username') { %>
+                                                        <td><a href="/main/webmail/username/<%=users[i][property] %>"><%= users[i][property] %></a></td>
+                                                    <% } else { %>
+                                                        <td name="<%= property %>" style="display: none;"><%= users[i][property] %></td>
                                                     <% } %>
-                                                </tr>
-                                            <% } %>
-                                        </tbody>
-                                    </thead>
-                                </table>
-                            </form>
+                                                <% } %>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </thead>
+                            </table>
                         </div>
                     </div>
                 </div>

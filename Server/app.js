@@ -268,7 +268,30 @@ app.get('/main/webmail', (req, res) => {
 
         dbhandler.getMessages(req.session.user.id)
             .then(results => {
-                res.render('webmail', {messageList: results, userNum: req.session.user.id});
+                res.render('webmail', {messageList: results, userNum: req.session.user.id, username: req.session.user.username});
+            })
+
+            .catch(err =>{
+                logger.error('There was an error attempting to get the list of messages for user: ' + req.session.user.username + '\n');
+                logger.error(err);
+                var flashMessage = 'There was an error processing that request. Please try again or contact an site administrator'
+                    + ' should this issue persist.';
+                req.flash('info', 'requestError');
+                req.flash('requestError', flashMessage);
+                res.redirect('/');
+            });
+    }
+    else{
+        res.redirect('/');
+    }
+});
+
+app.get('/main/webmail/username/:username', (req, res) => {
+    if (req.session && req.session.user) {
+
+        dbhandler.getMessages(req.session.user.id)
+            .then(results => {
+                res.render('webmail', {messageList: results, userNum: req.session.user.id, toUsername: req.params.username, username: req.session.user.username});
             })
 
             .catch(err =>{
@@ -288,7 +311,6 @@ app.get('/main/webmail', (req, res) => {
 
 app.get('/main/webmail/ajax', (req, res) => {
     if (req.session && req.session.user) {
-        logger.debug(req.query);
 
         dbhandler.getMessages(req.query.id)
             .then(results => {
@@ -421,8 +443,6 @@ app.post('/registerUser', (req, res) => {
 });
 
 app.post('/main/webmail/send', (req, res) => {
-
-    logger.debug(req.body);
     
     if (req.session && req.session.user) {
         dbhandler.insertMessage(req.body.toUser, req.body.fromUser, req.body.message)

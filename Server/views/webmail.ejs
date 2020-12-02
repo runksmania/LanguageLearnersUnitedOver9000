@@ -22,6 +22,17 @@
         </script>
     <% } %>
 
+    <% if(typeof(username) != 'undefined') {%>
+        <script>
+            var username = <%- JSON.stringify(username) %>
+        </script>
+    <% } %>
+
+    <% if(typeof(toUsername) != 'undefined') {%>
+        <script>
+            var toUsername = <%- JSON.stringify(toUsername) %>
+        </script>
+    <% } %>    
 </head>
 
 <body>
@@ -46,6 +57,7 @@
             <div class="webmailLayout">
                 <div class="inlineLayout sidebar">
                     <ul>
+                        <li id="compose">Compose</li>
                         <li id="inbox">Inbox</li>
                         <li id="sent">Sent</li>
                     </ul>

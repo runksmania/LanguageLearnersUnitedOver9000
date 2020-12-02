@@ -1,5 +1,8 @@
 'use strict'
 
+var contacts = {};
+var contactList = [];
+
 function changeMessageList(event){
     var intitializeString = '';
     var messages = messageList[0];
@@ -16,6 +19,11 @@ function changeMessageList(event){
             + '<span class="from">' + user + '</span>'
             + '<span class="date">' + datetime.toLocaleString('en-US', {timezone: 'PST'}) + '</span>'
             + '<span class="message">' + i.user_message + '</span></div>';
+
+        if (contacts[user] != 1){
+            contacts[user] = 1;
+            contactList.push(user);
+        }
     } 
 
     $('.list').empty().append(intitializeString);
@@ -29,23 +37,69 @@ function showMessage(){
     var messageInfo = messageList[0][index];
     var datetime = new Date(messageInfo.sent_date);
 
-    //If they are equal current messages listed are from the inbox else it's from sent.
+    //If clickedMessage != message current messages listed are from the sent messages.
     if (clickedMessage != message){
+
+        //Swap message info to sent messages.
         messageInfo = messageList[1][index];
     }
 
     $('.messageView .to').empty().html(`<p style="display: none" id="to">${messageInfo.to_user}</p><p><strong>To:</strong> ${messageInfo.to_user}</p>`);
     $('.messageView .from').empty().html(`<p style="display: none"id="from">${messageInfo.from_user}</p><p><strong>From:</strong> ${messageInfo.from_user}</p>`);
     $('.messageView .date').empty().html('<strong>Date Sent:</strong> ' + datetime.toLocaleString('en-US', {timezone: 'PST'}));
-    $('#message').empty().html('<strong>Message:</strong> <br/><br/>' + messageInfo.user_message);
-    $('.reply').empty().append('<textarea type="text" id="replyBox"/>');
+    $('#message').empty().show().html('<strong>Message:</strong> <br/><br/>' + messageInfo.user_message);
+    $('.reply').empty().show().height('20%').append('<textarea type="text" id="replyBox"/>');
     $('#sendBtn').show();
 }
 
+function composeView(event){
+    
+    if (messageList[1].length != 0){
+
+        if (contacts[messageList[1][0].to_user] != 1){
+
+            for (var i of messageList[1]){
+
+                if(contacts[i.to_user] != 1){
+                    contacts[i.to_user] = 1;
+                    contactList.push(i.to_user);
+                }
+            }
+        }
+
+        contactList.sort();
+        var toLineString = '<p style="display: none" id="to"></p><p><strong>To: </strong><select id="contactSelect" name="contactSelect">'
+            + '<option value="" disabled selected="selected">Select a contact--</option>'
+
+        for(var i of contactList) toLineString += `<option value="${i}">${i}</option></p>`;
+
+        $('.messageView .to').empty().html(toLineString);
+        $('.messageView .from').empty().html(`<p style="display: none"id="from">${username}</p><p><strong>From:</strong> ${username}</p>`);
+        $('.messageView .date').empty();
+        $('#message').css('display', 'none');
+        $('.reply').empty().height('80%').append('<textarea type="text" id="replyBox"/>');
+        $('#sendBtn').show();
+        $('#contactSelect').on('change', function(e){
+            $('#to').text($(this).val());
+        });
+    }
+    else{
+        $('#message').empty().show().html('<strong>Oops. You have no one in your contacts, please message new users'
+            + ' by finding them on the search user screen and clicking their name.</strong>');
+    }
+}
+
 function sendMessage(event){
-    var urlString = window.location.pathname + '/send';
-    var from = $('#to').text();
-    var to = $('#from').text();
+    var urlString = window.location.origin + '/main/webmail/send';
+    var to = $('#to').text();
+    var from = $('#from').text();
+
+    //If replying to a message to and from need to be swapped.
+    if(!$('#contactSelect').length){
+        var from = $('#to').text();
+        var to = $('#from').text();
+    }
+
     var reply = $('#replyBox').val();
 
     if (reply != ""){
@@ -61,16 +115,23 @@ function sendMessage(event){
                 $('.messageView .to').empty();
                 $('.messageView .from').empty();
                 $('.messageView .date').empty();
-                $('#message').empty().html('<strong>Your message was successfully sent.</strong>');
-                $('.reply').empty();
+                $('#message').empty()
+                $('.reply').empty().hide().height('20%');
                 $('#sendBtn').hide();
-                getMessages();
+                
+                if (result == true){    
+                    $('#message').show().html('<strong>Your message was successfully sent.</strong>');
+                    getMessages();
+                }
+                else{
+                    $('#message').show().html('<strong>There was an error sending the message. Please try again or contact a site administrator.</strong>');
+                }
             });
     }
 }
 
 function getMessages(){
-    var urlString = window.location.pathname + '/ajax';
+    var urlString = window.location.origin + '/main/webmail/ajax';
 
     $.ajax({
         method: "get",
@@ -91,8 +152,22 @@ $(document).ready(function ()
     if(typeof(messageList) != 'undefined') {
         $('#inbox').on('click', {type: 'inbox'}, changeMessageList);
         $('#sent').on('click', {type: 'sent'}, changeMessageList);
+        $('#compose').on('click', {}, composeView);
         changeMessageList({ data: {type: 'inbox'}});
         $('div .messageOverview').on('click', showMessage);
         $('#sendBtn').on('click', sendMessage);
+    }
+
+    if(typeof(username) != 'undefined' && typeof(toUsername) != 'undefined'){
+        $('.messageView .to').empty().html(`<p style="display: none" id="to">${toUsername}</p><p><strong>To:</strong> ${toUsername}</p>`);
+        $('.messageView .from').empty().html(`<p style="display: none"id="from">${username}</p><p><strong>From:</strong> ${username}</p>`);
+        $('#message').css('display', 'none');
+        $('.reply').empty().height('80%').append('<textarea type="text" id="replyBox"/>');
+        $('#sendBtn').show();
+
+        if(contacts[toUsername] != 1){
+            contacts[toUsername] = 1;
+            contactList.push(toUsername);
+        }
     }
 });

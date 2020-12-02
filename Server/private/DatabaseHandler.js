@@ -427,7 +427,8 @@ module.exports = class DatabaseHandler {
 
                     queryString = 'SELECT t.username AS to_user, f.username AS from_user, m.user_message, m.sent_date\n'
                     + 'FROM users t, users f, messages m\n'
-                    + 'WHERE t.user_num = m.user_to_num AND f.user_num = m.user_from_num AND f.user_num = $1;'
+                    + 'WHERE t.user_num = m.user_to_num AND f.user_num = m.user_from_num AND f.user_num = $1'
+                    + 'ORDER BY m.sent_date DESC;'
 
                     this.pool.query(queryString, [user_num])
                         .then(res =>{
@@ -451,10 +452,6 @@ module.exports = class DatabaseHandler {
     //Function to insert message into database.
     //Returns True if successful.
     insertMessage(to, from, message){
-
-        logger.debug(to);
-        logger.debug(from);
-        logger.debug(message);
         
         return new Promise(function(resolve, reject){
 
