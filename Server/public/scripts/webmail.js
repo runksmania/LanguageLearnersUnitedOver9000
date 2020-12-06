@@ -2,13 +2,16 @@
 
 var contacts = {};
 var contactList = [];
+var viewState = 'inbox';
 
 function changeMessageList(event){
     var intitializeString = '';
     var messages = messageList[0];
+    viewState = 'inbox';
 
     if (event.data.type == 'sent'){
         messages = messageList[1]
+        viewState = 'sent';
     }
     
     for(var i of messages) { 
@@ -32,10 +35,14 @@ function changeMessageList(event){
 
 function showMessage(){
     var index = $('.messageOverview').index(this);
-    var message = messageList[0][index].user_message;
     var clickedMessage = $(this).find('.message').text();
-    var messageInfo = messageList[0][index];
-    var datetime = new Date(messageInfo.sent_date);
+    var message = null;
+    var messageInfo = null;
+
+    if (messageList[0].length > 0){
+        message = messageList[0][index].user_message;
+        messageInfo = messageList[0][index];
+    }
 
     //If clickedMessage != message current messages listed are from the sent messages.
     if (clickedMessage != message){
@@ -43,6 +50,9 @@ function showMessage(){
         //Swap message info to sent messages.
         messageInfo = messageList[1][index];
     }
+
+    
+    var datetime = new Date(messageInfo.sent_date);
 
     $('.messageView .to').empty().html(`<p style="display: none" id="to">${messageInfo.to_user}</p><p><strong>To:</strong> ${messageInfo.to_user}</p>`);
     $('.messageView .from').empty().html(`<p style="display: none"id="from">${messageInfo.from_user}</p><p><strong>From:</strong> ${messageInfo.from_user}</p>`);
@@ -97,8 +107,8 @@ function sendMessage(event){
     var to = $('#to').text();
     var from = $('#from').text();
 
-    //If replying to a message to and from need to be swapped.
-    if(!$('#contactSelect').length){
+    //If replying to an inbox message to and from need to be swapped.
+    if(!$('#contactSelect').length && viewState == 'inbox'){
         var from = $('#to').text();
         var to = $('#from').text();
     }

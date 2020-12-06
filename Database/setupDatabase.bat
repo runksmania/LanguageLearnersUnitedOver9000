@@ -34,7 +34,7 @@ echo Beginning database installation.
 cd %cwd%
 start /W postgresql-13.0-1-windows-x64.exe
 
-echo Please add psql to your path before continuing.
+echo Please add psql to your path environment variable before continuing.
 pause
 echo.
 
