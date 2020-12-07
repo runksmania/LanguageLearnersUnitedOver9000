@@ -25,14 +25,20 @@ IF EXIST postgresql (
     cd ".\postgresql"
 )
 echo %cd%
-set string=localhost:5432:*:postgres:%pwd%
-echo %string% > pgpass.conf
+set string=localhost:5432:LLUO:postgres:%pwd%
+
+IF EXIST pgpass.conf (
+    echo >> pgpass.conf
+    echo %string% >> pgpass.conf    
+) ELSE (
+    echo %string% > pgpass.conf
+)
 
 echo Password for database is: %pwd%
 echo Please enter this password when prompted by installer.
 echo Beginning database installation.
 cd %cwd%
-start /W postgresql-13.0-1-windows-x64.exe
+start /W postgresql-13.1-1-windows-x64.exe
 
 echo Please add psql to your path environment variable before continuing.
 pause
